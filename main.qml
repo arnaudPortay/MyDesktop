@@ -24,7 +24,7 @@ ApplicationWindow {
                     text: qsTr("&Launch selected item")
                     shortcut: "Return"
                     onTriggered:{
-                        if (!root.renaming && desktopList.visible)
+                        if (!root.renaming && desktopList.visible && !filterTextField.focus)
                         {
                             openExternallyCurrentItem()
                         }
@@ -126,6 +126,7 @@ ApplicationWindow {
         desktopList.currentIndex = 0
     }
 
+
    property var desktopItems: []
    property var desktopItemsNames: []
    property bool renaming: false
@@ -137,12 +138,16 @@ ApplicationWindow {
         // Logic state
         property alias desktopItems: root.desktopItems
         property alias desktopItemsNames: root.desktopItemsNames
+        // Current filter
+        property alias currentFilter: filterTextField.text
 
         // Window position and size
         property alias windowX: root.x
         property alias windowY: root.y
         property alias windowWidth: root.width
         property alias windowHeight: root.height
+
+        // Theme
         property alias darkTheme: root.darkTheme
     }
 
@@ -224,11 +229,31 @@ ApplicationWindow {
             model: desktopItemsModel
 
             Keys.onUpPressed: {
-                desktopList.decrementCurrentIndex()
+                var index = desktopList.currentIndex
+                do
+                {
+                    desktopList.decrementCurrentIndex()
+                }
+                while (!desktopList.currentItem.visible && desktopList.currentIndex > 0)
+
+                if (desktopList.currentIndex === 0 && ! desktopList.currentItem.visible)
+                {
+                    desktopList.currentIndex = index
+                }
             }
 
             Keys.onDownPressed: {
-                desktopList.incrementCurrentIndex()
+                var index = desktopList.currentIndex
+                do
+                {
+                    desktopList.incrementCurrentIndex()
+                }
+                while (!desktopList.currentItem.visible && desktopList.currentIndex < desktopList.count - 1)
+
+                if (desktopList.currentIndex === desktopList.count - 1 && ! desktopList.currentItem.visible)
+                {
+                    desktopList.currentIndex = index
+                }
             }
 
             ScrollBar.vertical: ScrollBar {
@@ -241,11 +266,16 @@ ApplicationWindow {
             {
                 id:desktopItemsDelegate
 
+                property bool matchesFilter: {
+                    return String(name).toLowerCase().includes(filterTextField.text.toLowerCase());
+                }
+
                 anchors.left: parent.left
                 anchors.right: parent.right
                 leftPadding: bgRect.width + 10
 
-                height: childrenRect.height
+                height: matchesFilter ? childrenRect.height : 0
+                visible: matchesFilter
 
                 ToolTip.visible: desktopItemsDelegate.hovered
                 ToolTip.delay: 2000
@@ -508,6 +538,45 @@ ApplicationWindow {
     }
 
 
+    header: TextField {
+        id: filterTextField
+        width: parent.width * 0.77
+        anchors.centerIn: parent
+        placeholderText: qsTr("Search...")
+        selectByMouse: true
+        onFocusChanged: {
+            if (focus)
+                renaming = false
+        }
+
+        Keys.onShortcutOverride: {
+            event.accepted = (event.key === Qt.Key_Return)
+        }
+
+        onAccepted: {
+            focus = false
+            desktopList.focus = true
+
+            if (!desktopList.currentItem.visible)
+            {
+                desktopList.currentIndex = 0
+            }
+
+            if (!desktopList.currentItem.visible)
+            {
+                do
+                {
+                    desktopList.incrementCurrentIndex()
+                }
+                while (!desktopList.currentItem.visible && desktopList.currentIndex < desktopList.count - 1)
+            }
+        }
+        Keys.onEscapePressed: {
+            text = ""
+            focus = false
+            desktopList.focus = true
+        }
+    }
 
 
     footer: Rectangle {
