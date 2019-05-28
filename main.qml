@@ -150,6 +150,15 @@ ApplicationWindow {
                         helpRect.visible = true
                     }
                 }
+
+                MenuSeparator {}
+
+                Action {
+                    text: qsTr("About") + translator.emptyString
+                    onTriggered: {
+                        aboutDialog.open()
+                    }
+                }
             }
         }
 
@@ -655,6 +664,31 @@ ApplicationWindow {
             onClicked: {
                 desktopList.visible = true
                 helpRect.visible = false
+            }
+        }
+    }
+
+    Dialog {
+        id: aboutDialog
+
+        modal: true
+        standardButtons: Dialog.Ok
+
+        title: qsTr("About") + translator.emptyString
+
+        Text {
+            text: "<style>a:link { color: " + Material.accent + "; }</style>" + qsTr("MyDesktop was developped by Arnaud Portay.<br>The source code is available on <a href=\"https://github.com/arnaudPortay/MyDesktop\">Github</a>.<br>Some code was taken here and there on the web, including from the <a href = \"https:\/\/github.com/VincentPonchaut/qmlplayground\">QmlPlayground</a> application by Vincent Ponchaut.<br><br>The application icon was made by <a href=\"https://www.flaticon.com/authors/pixel-perfect\">Pixel perfect</a> and taken from <a href=\"www.flaticon.com\">www.flaticon.com</a>.") + translator.emptyString
+            color: Material.foreground
+            font.family: "Segoe UI"
+            textFormat: Text.RichText
+            wrapMode: Text.Wrap
+            anchors.fill: parent
+            onLinkActivated: Qt.openUrlExternally(link)
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
             }
         }
     }

@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QQuickStyle>
 #include <QQmlContext>
+#include <QIcon>
 #include "filewrapper.h"
 #include "desktoptranslator.h"
 
@@ -16,6 +17,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQuickStyle::setStyle("Material");
+    app.setWindowIcon(QIcon(":/img/monitor.svg"));
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
