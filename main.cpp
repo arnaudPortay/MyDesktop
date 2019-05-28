@@ -2,13 +2,15 @@
 #include <QQmlApplicationEngine>
 #include <QSettings>
 #include <QQuickStyle>
+#include <QQmlContext>
 #include "filewrapper.h"
+#include "desktoptranslator.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setOrganizationName("MyDesktop");
-    QCoreApplication::setOrganizationName("MyDesktop.com");
+    QCoreApplication::setOrganizationDomain("MyDesktop.com");
     QCoreApplication::setApplicationName("MyDesktop");
 
     QGuiApplication app(argc, argv);
@@ -26,6 +28,8 @@ int main(int argc, char *argv[])
     });
 
     QQmlApplicationEngine engine;
+    DesktopTranslator lTranslator;
+    engine.rootContext()->setContextProperty("translator", &lTranslator);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;

@@ -15,7 +15,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    filewrapper.cpp
+    filewrapper.cpp \
+    desktoptranslator.cpp
 
 RESOURCES += qml.qrc
 
@@ -31,4 +32,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    filewrapper.h
+    filewrapper.h \
+    desktoptranslator.h
+
+# Localization
+TRANSLATIONS = FR_fr.ts

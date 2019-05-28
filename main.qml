@@ -10,18 +10,27 @@ ApplicationWindow {
     width: 640
     height: 480
     id:root
-    title: qsTr("My Desktop")
+    title: qsTr("My Desktop") + translator.emptyString
 
     Material.theme: darkTheme ? Material.Dark : Material.Light
     Material.accent: Material.Cyan
 
     menuBar: MenuBar {
+
         id: myMenuBar
+
+        background: Rectangle{
+            width: parent.width
+            color: Material.background
+            height: myMenuBar.height
+        }
+
             Menu {
-                title: qsTr("&Actions")
+                title: qsTr("&Actions") + translator.emptyString
+                Material.elevation: 20
 
                 Action {
-                    text: qsTr("&Launch selected item")
+                    text: qsTr("&Launch selected item")+ translator.emptyString
                     shortcut: "Return"
                     onTriggered:{
                         if (!root.renaming && desktopList.visible && !filterTextField.focus)
@@ -32,7 +41,7 @@ ApplicationWindow {
                 }
 
                 Action {
-                    text: qsTr("&Open selected item location")
+                    text: qsTr("&Open selected item location") + translator.emptyString
                     onTriggered: {
                         if (!root.renaming && desktopList.visible)
                         {
@@ -48,7 +57,7 @@ ApplicationWindow {
                 MenuSeparator{}
 
                 Action {
-                    text: qsTr("&Quit")
+                    text: qsTr("&Quit") + translator.emptyString
                     onTriggered: {
                         Qt.quit()
                     }
@@ -57,10 +66,10 @@ ApplicationWindow {
             }
 
             Menu {
-                title: qsTr("&Edit")
+                title: qsTr("&Edit") + translator.emptyString
 
                 Action {
-                    text: qsTr("&Rename")
+                    text: qsTr("&Rename") + translator.emptyString
                     onTriggered: {
                         if (desktopList.visible)
                         {
@@ -71,7 +80,7 @@ ApplicationWindow {
                 }
 
                 Action {
-                    text: qsTr("&Refresh")
+                    text: qsTr("&Refresh") + translator.emptyString
                     onTriggered: {
                         if (desktopList.visible)
                         {
@@ -83,7 +92,7 @@ ApplicationWindow {
                 }
 
                 Action {
-                    text: qsTr("&Delete")
+                    text: qsTr("&Delete") + translator.emptyString
                     onTriggered: {
                         if (desktopList.visible)
                         {
@@ -99,7 +108,7 @@ ApplicationWindow {
                 title: qsTr("&?")
 
                 Action{
-                    text: qsTr("&Use dark theme")
+                    text: qsTr("&Use dark theme") + translator.emptyString
                     checkable: true
                     checked: root.darkTheme
                     onTriggered: {
@@ -108,10 +117,33 @@ ApplicationWindow {
                     shortcut: "Ctrl+T"
                 }
 
+                Menu{
+                    title: qsTr("&Language") + translator.emptyString
+                    Action {
+                        text: "Français"
+                        checkable: true
+                        checked: root.language === "fr"
+                        enabled: root.language !== "fr"
+                        onTriggered: {
+                            root.language = "fr"
+                        }
+                    }
+
+                    Action {
+                        text: "English"
+                        checkable: true
+                        checked: root.language === "en"
+                        enabled: root.language !== "en"
+                        onTriggered: {
+                            root.language = "en"
+                        }
+                    }
+                }
+
                 MenuSeparator {}
 
                 Action{
-                    text: qsTr("&Help")
+                    text: qsTr("&Help") + translator.emptyString
                     shortcut: "Ctrl+H"
                     onTriggered: {
                         desktopList.visible = false
@@ -131,6 +163,10 @@ ApplicationWindow {
    property var desktopItemsNames: []
    property bool renaming: false
    property bool darkTheme: true
+   property string language: "en"
+   onLanguageChanged: {
+       translator.selectLanguage(language)
+   }
 
    Settings {
         id: settings
@@ -149,6 +185,9 @@ ApplicationWindow {
 
         // Theme
         property alias darkTheme: root.darkTheme
+
+        // Language
+        property alias language: root.language
     }
 
     Rectangle{
@@ -413,7 +452,7 @@ ApplicationWindow {
                         height: 40
                         width: height
                         imageSource: "qrc:///img/trash.svg"
-                        ToolTip.text: qsTr("Delete")
+                        ToolTip.text: qsTr("Delete") + translator.emptyString
 
                         visible: desktopItemsDelegate.hovered
 
@@ -431,7 +470,7 @@ ApplicationWindow {
                         height: 40
                         width: height
                         imageSource: hovered ? "qrc:///img/folderOpen.svg" : "qrc:///img/folder.svg"
-                        ToolTip.text: qsTr("Open location")
+                        ToolTip.text: qsTr("Open location") + translator.emptyString
 
                         visible: desktopItemsDelegate.hovered
 
@@ -478,7 +517,7 @@ ApplicationWindow {
 
             anchors.fill: parent
             anchors.margins: 10
-            text: qsTr("Drag and drop files, folders, applications, shortcuts or internet links.")
+            text: qsTr("Drag and drop files, folders, applications, shortcuts or internet links.") + translator.emptyString
             font.family: "Segoe UI"
             visible: desktopItems.length === 0
             font.italic: true
@@ -516,11 +555,12 @@ ApplicationWindow {
                       qsTr("Drag and drop an item (file, folder, application etc...) onto the My Desktop window to add it to the list of available items.")+ "<br>" +
                       qsTr("If you wish to open the folder containing an item, click on the folder icon which appears when hovering an item.")+"<br>" +
                       qsTr("To delete an item, click on the trashcan icon which appears when hovering the item.")+ "<br>" +
-                      qsTr("To open an item with its default associated program, double-click an item")+ "<br><br>" +
+                      qsTr("To open an item with its default associated program, double-click an item.")+ "<br><br>" +
                       qsTr("If an item is displayed in red and is striked out, this means the item does not exist anymore.")+ "<br>" +
                       qsTr("If you are trying to open an item and it does not work, maybe it has been deleted. Click the refresh button at the bottom of the window to refresh the display and check if it appears red.")+ "<br><br>" +
                       qsTr("You can rename an item by selecting it and then clicking \"Edit\" then \"Rename\". This will only rename the list entry and not the underlying file/folder/application.")+ "<br><br>" +
-                      "<b>" + qsTr("Note:")+"</b>"+qsTr("If you drag and drop a shortcut file onto the My Desktop window then what will be remembered is the shortcut target, not the shortcut itself, as such you can safely delete said shortcut.")+ "<br><br>" +
+                      qsTr("You can change the application language by clicking \"?\" then \"Language\".") + "<br>" + "<br>" +
+                      "<b>" + qsTr("Note: ")+"</b>"+qsTr("If you drag and drop a shortcut file onto the My Desktop window then what will be remembered is the shortcut target, not the shortcut itself, as such you can safely delete said shortcut.")+ "<br><br>" +
                       "<h2>" + qsTr("Shortcut list") + "</h2>" +
                       "<ul>" +
                       "<li><b><i>" + qsTr("Enter: ")+"</i></b>" + qsTr("open the selected item with the associated application.") + "</li>"+
@@ -531,7 +571,7 @@ ApplicationWindow {
                       "<li><b><i>" + qsTr("Ctrl + T: ")+"</i></b>" + qsTr("switch between light and dark theme.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + H: ")+"</i></b>" + qsTr("opens this help page.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + W: ")+"</i></b>" + qsTr("closes the application.") + "</li>"+
-                      "</ul>"
+                      "</ul>"  + translator.emptyString
                 wrapMode: Text.Wrap
             }
         }
@@ -542,7 +582,7 @@ ApplicationWindow {
         id: filterTextField
         width: parent.width * 0.77
         anchors.centerIn: parent
-        placeholderText: qsTr("Search...")
+        placeholderText: qsTr("Search...") + translator.emptyString
         selectByMouse: true
         onFocusChanged: {
             if (focus)
@@ -592,7 +632,7 @@ ApplicationWindow {
             imageSource: "qrc:///img/refresh.svg"
             margins: 10
             visible: !helpRect.visible
-            ToolTip.text: qsTr("Refresh")
+            ToolTip.text: qsTr("Refresh") + translator.emptyString
             ToolTip.delay: 2000
             ToolTip.timeout: 5000
             onClicked: {
@@ -604,7 +644,7 @@ ApplicationWindow {
         Button {
             id: okButton
             anchors.centerIn: parent
-            text: qsTr("Ok")
+            text: qsTr("Ok") + translator.emptyString
             visible: helpRect.visible
             onClicked: {
                 desktopList.visible = true

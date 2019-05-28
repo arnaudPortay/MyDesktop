@@ -6,5 +6,6 @@
         <file>img/folder.svg</file>
         <file>img/folderOpen.svg</file>
         <file>img/refresh.svg</file>
+        <file>FR_fr.qm</file>
     </qresource>
 </RCC>
