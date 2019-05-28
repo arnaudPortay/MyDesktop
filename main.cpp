@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("MyDesktop");
     QCoreApplication::setOrganizationDomain("MyDesktop.com");
     QCoreApplication::setApplicationName("MyDesktop");
+    QCoreApplication::setApplicationVersion("1.0.0");
 
     QGuiApplication app(argc, argv);
 
