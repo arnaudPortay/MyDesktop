@@ -569,6 +569,7 @@ ApplicationWindow {
                       "<li><b><i>" + qsTr("F2: ")+"</i></b>" + qsTr("rename the selected item. \"Enter\" to validate \"Esc\" to cancel.") + "</li>"+
                       "<li><b><i>" + qsTr("F5: ")+"</i></b>" + qsTr("refresh display.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + T: ")+"</i></b>" + qsTr("switch between light and dark theme.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + F: ")+"</i></b>" + qsTr("search shortcut.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + H: ")+"</i></b>" + qsTr("opens this help page.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + W: ")+"</i></b>" + qsTr("closes the application.") + "</li>"+
                       "</ul>"  + translator.emptyString
@@ -589,12 +590,18 @@ ApplicationWindow {
                 renaming = false
         }
 
+        Shortcut {
+            sequence: "Ctrl+F"
+            onActivated: {
+                filterTextField.focus = true
+            }
+        }
+
         Keys.onShortcutOverride: {
             event.accepted = (event.key === Qt.Key_Return)
         }
 
         onAccepted: {
-            focus = false
             desktopList.focus = true
 
             if (!desktopList.currentItem.visible)
@@ -613,7 +620,6 @@ ApplicationWindow {
         }
         Keys.onEscapePressed: {
             text = ""
-            focus = false
             desktopList.focus = true
         }
     }
