@@ -41,7 +41,7 @@ ApplicationWindow {
                 }
 
                 Action {
-                    text: qsTr("&Open selected item location") + translator.emptyString
+                    text: qsTr("&Open location") + translator.emptyString
                     onTriggered: {
                         if (!root.renaming && desktopList.visible)
                         {
@@ -141,7 +141,7 @@ ApplicationWindow {
                 }
 
                 Action {
-                    text: "&Launch at startup"
+                    text: qsTr("&Launch at startup") + translator.emptyString
                     checkable: true
                     checked: File.isLaunchingAtStartup()
                     onTriggered: {
@@ -585,6 +585,7 @@ ApplicationWindow {
                       qsTr("If you are trying to open an item and it does not work, maybe it has been deleted. Click the refresh button at the bottom of the window to refresh the display and check if it appears red.")+ "<br><br>" +
                       qsTr("You can rename an item by selecting it and then clicking \"Edit\" then \"Rename\". This will only rename the list entry and not the underlying file/folder/application.")+ "<br><br>" +
                       qsTr("You can change the application language by clicking \"?\" then \"Language\".") + "<br>" + "<br>" +
+                      qsTr("You can make this application launch automatically at startup by clicking \"?\" then \"Launch at startup\".") + "<br>" + "<br>" +
                       "<b>" + qsTr("Note: ")+"</b>"+qsTr("If you drag and drop a shortcut file onto the My Desktop window then what will be remembered is the shortcut target, not the shortcut itself, as such you can safely delete said shortcut.")+ "<br><br>" +
                       "<h2>" + qsTr("Shortcut list") + "</h2>" +
                       "<ul>" +
@@ -610,6 +611,7 @@ ApplicationWindow {
         anchors.centerIn: parent
         placeholderText: qsTr("Search...") + translator.emptyString
         selectByMouse: true
+        visible: desktopList.visible && desktopList.count > 0
         onFocusChanged: {
             if (focus)
                 renaming = false
