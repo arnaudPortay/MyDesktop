@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>MyDesktop</DisplayName>
+    <Description>MyDesktop is an application which allows the user to gather, open and launch various files, folders and applications.</Description>
+		<Description xml:lang="fr_fr">MyDesktop est une application qui permet de rassembler, d'ouvrir et de lancer des fichiers, dossier et applications diverses.</Description>
+    <Version>1.0.0</Version>
+    <ReleaseDate>2019-05-29</ReleaseDate>
+		<Name>com.apy.mydesktop</Name>
+		<ForcedInstallation>true</ForcedInstallation>
+		<Checkable>false</Checkable>
+</Package>

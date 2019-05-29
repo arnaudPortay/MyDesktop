@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>MyDesktop</Name>
+    <Version>1.0.0</Version>
+    <Title>MyDesktop</Title>
+    <Publisher>Arnaud Portay</Publisher>
+    <StartMenuDir>My Desktop</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/MyDesktop</TargetDir>
+		<SupportsModify>false</SupportsModify>
+</Installer>
