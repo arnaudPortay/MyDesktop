@@ -140,6 +140,22 @@ ApplicationWindow {
                     }
                 }
 
+                Action {
+                    text: "&Launch at startup"
+                    checkable: true
+                    checked: File.isLaunchingAtStartup()
+                    onTriggered: {
+                        if (Qt.platform.os === "windows")
+                        {
+                            File.toggleLaunchAtStartup();
+                        }
+                        else
+                        {
+                            notSupportedDialog.open()
+                        }
+                    }
+                }
+
                 MenuSeparator {}
 
                 Action{
@@ -673,6 +689,7 @@ ApplicationWindow {
 
         modal: true
         standardButtons: Dialog.Ok
+        font.pointSize: 12
 
         title: qsTr("About") + translator.emptyString
 
@@ -680,6 +697,7 @@ ApplicationWindow {
             text: "<style>a:link { color: " + Material.accent + "; }</style>" + qsTr("MyDesktop was developped by Arnaud Portay.<br>The source code is available on <a href=\"https://github.com/arnaudPortay/MyDesktop\">Github</a>.<br>Some code was taken here and there on the web, including from the <a href = \"https:\/\/github.com/VincentPonchaut/qmlplayground\">QmlPlayground</a> application by Vincent Ponchaut.<br><br>The application icon was made by <a href=\"https://www.flaticon.com/authors/pixel-perfect\">Pixel perfect</a> and taken from <a href=\"www.flaticon.com\">www.flaticon.com</a>.") + translator.emptyString
             color: Material.foreground
             font.family: "Segoe UI"
+            font.pointSize: 10
             textFormat: Text.RichText
             wrapMode: Text.Wrap
             anchors.fill: parent
@@ -690,6 +708,27 @@ ApplicationWindow {
                 acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
                 cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
             }
+        }
+    }
+
+    Dialog {
+        id: notSupportedDialog
+
+        modal: true
+        standardButtons: Dialog.Ok
+        anchors.centerIn: parent
+        font.pointSize: 12
+
+        title: qsTr("Woops...") + translator.emptyString
+
+        Text
+        {
+            text: qsTr("This feature is not supported on your platform yet.") + translator.emptyString
+            color: Material.foreground
+            font.family: "Segoe UI"
+            font.pointSize: 10
+            wrapMode: Text.Wrap
+            anchors.fill: parent
         }
     }
 

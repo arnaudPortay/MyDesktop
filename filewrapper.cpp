@@ -1,10 +1,15 @@
 #include "filewrapper.h"
 #include <QDir>
+#include <QStandardPaths>
+#include <QGuiApplication>
 
 /************************************************************************************************************/
-
+#include <iostream>
 FileWrapper::FileWrapper():QObject (nullptr)
 {
+#ifdef _WIN32
+   mStartupFolder.setPath(QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).at(0) + QDir::separator() + "Startup");
+#endif
 }
 
 /************************************************************************************************************/
@@ -70,6 +75,34 @@ QString FileWrapper::getDir(const QString &fileName)
     }
 
     return lTemp;
+}
+
+/************************************************************************************************************/
+
+bool FileWrapper::isLaunchingAtStartup()
+{
+#ifdef _WIN32
+    return QFile::exists(mStartupFolder.path() + "/" + qGuiApp->applicationName() + ".lnk" );
+#else
+    return false;
+#endif
+}
+
+/************************************************************************************************************/
+
+void FileWrapper::toggleLaunchAtStartup()
+{
+#ifdef _WIN32
+    if (isLaunchingAtStartup())
+    {
+        QFile(mStartupFolder.path() + "/" + qGuiApp->applicationName() + ".lnk").remove();
+    }
+    else
+    {
+        QFile::link(qGuiApp->applicationFilePath(), mStartupFolder.path() + "/" + qGuiApp->applicationName() + ".lnk");
+    }
+
+#endif
 }
 
 /************************************************************************************************************/
