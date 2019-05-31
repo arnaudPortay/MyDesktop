@@ -6,6 +6,7 @@
 #include <QIcon>
 #include "filewrapper.h"
 #include "desktoptranslator.h"
+#include "clipboardwrapper.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +27,15 @@ int main(int argc, char *argv[])
         Q_UNUSED(engine);
         Q_UNUSED(scriptEngine);
         FileWrapper* lSingleton = new FileWrapper();
+
+        return lSingleton;
+    });
+
+    qmlRegisterSingletonType<ClipboardWrapper>("Apy.clipboard", 1, 0, "Clipboard", [](QQmlEngine* engine, QJSEngine* scriptEngine)->QObject*{
+        Q_UNUSED(engine);
+        Q_UNUSED(scriptEngine);
+
+        ClipboardWrapper* lSingleton = new ClipboardWrapper();
 
         return lSingleton;
     });

@@ -5,6 +5,7 @@ import Qt.labs.settings 1.0
 import QtQuick.Controls.Material 2.2
 import Apy.file.utilies 1.0
 import Qt.labs.platform 1.1 as Labs
+import Apy.clipboard 1.0
 
 ApplicationWindow {
     id: root
@@ -157,7 +158,7 @@ ApplicationWindow {
                 }
             }
             Action {
-                text: qsTr("&Show window at app startup")
+                text: qsTr("&Show window at app startup") + translator.emptyString
                 checkable: true
                 checked: settings.showWindowAtStartup
                 onTriggered: {
@@ -235,8 +236,18 @@ ApplicationWindow {
     Rectangle{
         id: baseRectangle
         anchors.fill: parent
-        
+
         color: Material.background
+
+        Shortcut {
+            sequence: StandardKey.Paste
+            onActivated: {
+                if (desktopList.visible && Clipboard.getUrls().length > 0)
+                {
+                    addUrls(Clipboard.getUrls())
+                }
+            }
+        }
         
         DropArea{
             id: globalDropArea
@@ -250,55 +261,10 @@ ApplicationWindow {
             }
             
             onDropped: {
-                var ItemsCopy = root.desktopItems.slice()
-                var NamesCopy = root.desktopItemsNames.slice()
-                
-                var currentUrl = ""
-                var currentName = ""
-                var currentExtension = ""
-                var lNewExtension = ""
-                var dirs = []
-                
-                for (var i=0; i < drop.urls.length; i++){
-                    
-                    currentUrl = "" + drop.urls[i]
-                    
-                    if (!currentUrl.startsWith("file:///"))
-                    {
-                        NamesCopy.push(currentUrl)
-                    }
-                    else
-                    {
-                        dirs = currentUrl.split("/")
-                        currentName = String(dirs[dirs.length - 1])
-                        currentExtension = File.getFileExtension(currentUrl)
-                        
-                        currentUrl = File.symLinkTarget(currentUrl)
-                        
-                        if (currentExtension !== "")
-                        {
-                            lNewExtension = File.getFileExtension(currentUrl)
-                            currentName = currentName.replace("." + currentExtension,
-                                                              (lNewExtension === "") ? "" : "." + lNewExtension )
-                        }
-                        else if (File.getFileExtension(currentUrl) !== "")
-                        {
-                            currentName = currentName.concat('.', File.getFileExtension(currentUrl))
-                        }
-                        
-                        NamesCopy.push(currentName)
-                    }
-                    
-                    ItemsCopy.push(currentUrl)
+                if (desktopList.visible)
+                {
+                    addUrls(drop.urls)
                 }
-                
-                root.desktopItems = ItemsCopy;
-                root.desktopItemsNames = NamesCopy;
-                
-                root.desktopItemsChanged();
-                root.desktopItemsNamesChanged();
-                
-                refreshModel();
             }
         }
         
@@ -830,5 +796,58 @@ ApplicationWindow {
         {
             openExternally(desktopList.currentIndex)
         }
+    }
+
+    function addUrls(urls)
+    {
+        var ItemsCopy = root.desktopItems.slice()
+        var NamesCopy = root.desktopItemsNames.slice()
+
+        var currentUrl = ""
+        var currentName = ""
+        var currentExtension = ""
+        var lNewExtension = ""
+        var dirs = []
+
+        for (var i=0; i < urls.length; i++){
+
+            currentUrl = "" + urls[i]
+
+            if (!currentUrl.startsWith("file:///"))
+            {
+                NamesCopy.push(currentUrl)
+            }
+            else
+            {
+                dirs = currentUrl.split("/")
+                currentName = String(dirs[dirs.length - 1])
+                currentExtension = File.getFileExtension(currentUrl)
+
+                currentUrl = File.symLinkTarget(currentUrl)
+
+                if (currentExtension !== "")
+                {
+                    lNewExtension = File.getFileExtension(currentUrl)
+                    currentName = currentName.replace("." + currentExtension,
+                                                      (lNewExtension === "") ? "" : "." + lNewExtension )
+                }
+                else if (File.getFileExtension(currentUrl) !== "")
+                {
+                    currentName = currentName.concat('.', File.getFileExtension(currentUrl))
+                }
+
+                NamesCopy.push(currentName)
+            }
+
+            ItemsCopy.push(currentUrl)
+        }
+
+        root.desktopItems = ItemsCopy;
+        root.desktopItemsNames = NamesCopy;
+
+        root.desktopItemsChanged();
+        root.desktopItemsNamesChanged();
+
+        refreshModel();
     }
 }
