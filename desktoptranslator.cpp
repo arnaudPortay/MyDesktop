@@ -1,10 +1,14 @@
 #include "desktoptranslator.h"
 #include <QGuiApplication>
 
+/************************************************************************************************************/
+
 DesktopTranslator::DesktopTranslator(QObject *parent) : QObject(parent)
 {
     mFrenchTranslator = new QTranslator(this);
 }
+
+/************************************************************************************************************/
 
 DesktopTranslator::~DesktopTranslator()
 {
@@ -15,10 +19,14 @@ DesktopTranslator::~DesktopTranslator()
     }
 }
 
+/************************************************************************************************************/
+
 QString DesktopTranslator::getEmptyString()
 {
     return "";
 }
+
+/************************************************************************************************************/
 
 void DesktopTranslator::selectLanguage(QString language)
 {
@@ -33,3 +41,5 @@ void DesktopTranslator::selectLanguage(QString language)
 
       emit languageChanged();
 }
+
+/************************************************************************************************************/

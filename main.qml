@@ -6,14 +6,14 @@ SystemTrayIcon {
 
     visible: true
     icon.source: "qrc:/img/monitor.svg"
-    tooltip: qsTr("Double click to open window\nRight click to show menu")
+    tooltip: qsTr("Double click to open window\nRight click to show menu") + translator.emptyString
 
     menu: Menu {
         id: menu
 
         MenuItem {
             id: showItem
-            text: qsTr("Show")
+            text: qsTr("Show") + translator.emptyString
             onTriggered: showWindow()
         }
         MenuSeparator {}
@@ -36,7 +36,7 @@ SystemTrayIcon {
 
         MenuSeparator {}
         MenuItem {
-            text: qsTr("Exit")
+            text: qsTr("Exit") + translator.emptyString
             onTriggered: Qt.quit()
         }
 

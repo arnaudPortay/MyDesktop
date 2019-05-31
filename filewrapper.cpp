@@ -4,7 +4,7 @@
 #include <QGuiApplication>
 
 /************************************************************************************************************/
-#include <iostream>
+
 FileWrapper::FileWrapper():QObject (nullptr)
 {
 #ifdef _WIN32
