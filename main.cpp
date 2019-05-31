@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QSettings>
 #include <QQuickStyle>
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("MyDesktop");
     QCoreApplication::setApplicationVersion("1.0.0");
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     QQuickStyle::setStyle("Material");
     app.setWindowIcon(QIcon(":/img/monitor.svg"));
