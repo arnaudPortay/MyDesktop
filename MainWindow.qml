@@ -561,6 +561,7 @@ ApplicationWindow {
                       qsTr("My Desktop allows you to gather applications, files, folders and hyperlinks and to open them with their default program.")+ "<br>" +
                       qsTr("You can also open the item location in the file explorer if said file is local.")+ "<br><br>"+
                       qsTr("Drag and drop an item (file, folder, application etc...) onto the My Desktop window to add it to the list of available items.")+ "<br>" +
+                      qsTr("You can also paste a link to the item from the clipboard.") + "<br>" +
                       qsTr("If you wish to open the folder containing an item, click on the folder icon which appears when hovering an item.")+"<br>" +
                       qsTr("To delete an item, click on the trashcan icon which appears when hovering the item.")+ "<br>" +
                       qsTr("To open an item with its default associated program, double-click an item.")+ "<br><br>" +
@@ -581,6 +582,7 @@ ApplicationWindow {
                       "<li><b><i>" + qsTr("Ctrl + F: ")+"</i></b>" + qsTr("search shortcut.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + H: ")+"</i></b>" + qsTr("opens this help page.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + W: ")+"</i></b>" + qsTr("closes the application.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + V: ")+"</i></b>" + qsTr("Add an item to the list by pasting from the clipboard.") + "</li>"+
                       "</ul>"  + translator.emptyString
                 wrapMode: Text.Wrap
             }
