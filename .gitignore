@@ -60,3 +60,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# QtCreator generated files
+MyDesktop.pro.user
+MyDesktop.pro.user.b5fb0e4.4.9-pre1

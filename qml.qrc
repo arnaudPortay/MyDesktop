@@ -8,5 +8,6 @@
         <file>img/refresh.svg</file>
         <file>FR_fr.qm</file>
         <file>img/monitor.svg</file>
+        <file>MainWindow.qml</file>
     </qresource>
 </RCC>
