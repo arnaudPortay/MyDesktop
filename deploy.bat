@@ -3,7 +3,7 @@ mkdir .\Installer_Data\packages\com.apy.mydesktop\bin
 REM Deploy libaries
 windeployqt --no-translations --no-angle --no-webkit2 --release --qmldir . --dir .\Installer_Data\packages\com.apy.mydesktop\bin ..\MyDesktop-Release\release\MyDesktop.exe
 REM Copy exe to release path
-robocopy .\Installer_Data\packages\com.apy.mydesktop\bin ..\MyDesktop_Package\ MyDesktop.exe
+robocopy ..\MyDesktop-Release\release\ .\Installer_Data\packages\com.apy.mydesktop\bin\ MyDesktop.exe
 REM Zipping data
 archivegen .\Installer_Data\packages\com.apy.mydesktop\data\mydesktop.7z .\Installer_Data\packages\com.apy.mydesktop\bin
 REM Delete unzipped data
