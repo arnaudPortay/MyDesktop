@@ -14,3 +14,5 @@ REM Create installer
 binarycreator.exe -f -p .\Installer_Data\packages -c .\Installer_Data\config\config.xml MyDesktopSetup.exe
 REM Delete zipped data
 del /q /f .\Installer_Data\packages\com.apy.mydesktop\data\mydesktop.7z
+
+pause

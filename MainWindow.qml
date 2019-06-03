@@ -207,6 +207,7 @@ ApplicationWindow {
     onLanguageChanged: {
         translator.selectLanguage(language)
     }
+    property bool keepLink: false
     
     Settings {
         id: settings
@@ -240,7 +241,7 @@ ApplicationWindow {
         color: Material.background
 
         Shortcut {
-            sequence: StandardKey.Paste
+            sequences: [StandardKey.Paste, "Ctrl+Shift+V"]
             onActivated: {
                 if (desktopList.visible && Clipboard.getUrls().length > 0)
                 {
@@ -300,6 +301,22 @@ ApplicationWindow {
                 if (desktopList.currentIndex === desktopList.count - 1 && ! desktopList.currentItem.visible)
                 {
                     desktopList.currentIndex = index
+                }
+            }
+
+            Keys.onPressed: {
+                if (event.key === Qt.Key_Shift)
+                {
+                    root.keepLink = true;
+                    event.accepted = true;
+                }
+            }
+
+            Keys.onReleased: {
+                if (event.key === Qt.Key_Shift)
+                {
+                    root.keepLink = false;
+                    event.accepted = true;
                 }
             }
             
@@ -825,7 +842,10 @@ ApplicationWindow {
                 currentName = String(dirs[dirs.length - 1])
                 currentExtension = File.getFileExtension(currentUrl)
 
-                currentUrl = File.symLinkTarget(currentUrl)
+                if (!keepLink)
+                {
+                    currentUrl = File.symLinkTarget(currentUrl)
+                }
 
                 if (currentExtension !== "")
                 {
