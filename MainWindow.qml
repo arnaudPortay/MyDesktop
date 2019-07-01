@@ -104,6 +104,24 @@ ApplicationWindow {
                 }
                 shortcut: StandardKey.Delete
             }
+
+            MenuSeparator{}
+
+            Action {
+                text: qsTr("&Move up") + translator.emptyString
+                enabled: desktopList.currentIndex != 0
+                onTriggered: {
+                    desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
+                }
+            }
+
+            Action {
+                text: qsTr("&Move down") + translator.emptyString
+                enabled: desktopList.currentIndex != desktopList.count
+                onTriggered: {
+                    desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
+                }
+            }
         }
         
         Menu {
@@ -208,6 +226,7 @@ ApplicationWindow {
         translator.selectLanguage(language)
     }
     property bool keepLink: false
+    property bool moving: false
     
     Settings {
         id: settings
@@ -277,30 +296,46 @@ ApplicationWindow {
             model: desktopItemsModel
             
             Keys.onUpPressed: {
-                var index = desktopList.currentIndex
-                do
+
+                if (event.modifiers & Qt.ControlModifier)
                 {
-                    desktopList.decrementCurrentIndex()
+                    desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
                 }
-                while (!desktopList.currentItem.visible && desktopList.currentIndex > 0)
-                
-                if (desktopList.currentIndex === 0 && ! desktopList.currentItem.visible)
+                else
                 {
-                    desktopList.currentIndex = index
+                    var index = desktopList.currentIndex
+                    do
+                    {
+                        desktopList.decrementCurrentIndex()
+                    }
+                    while (!desktopList.currentItem.visible && desktopList.currentIndex > 0)
+
+                    if (desktopList.currentIndex === 0 && ! desktopList.currentItem.visible)
+                    {
+                        desktopList.currentIndex = index
+                    }
                 }
             }
             
             Keys.onDownPressed: {
-                var index = desktopList.currentIndex
-                do
+
+                if (event.modifiers & Qt.ControlModifier)
                 {
-                    desktopList.incrementCurrentIndex()
+                    desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
                 }
-                while (!desktopList.currentItem.visible && desktopList.currentIndex < desktopList.count - 1)
-                
-                if (desktopList.currentIndex === desktopList.count - 1 && ! desktopList.currentItem.visible)
+                else
                 {
-                    desktopList.currentIndex = index
+                    var index = desktopList.currentIndex
+                    do
+                    {
+                        desktopList.incrementCurrentIndex()
+                    }
+                    while (!desktopList.currentItem.visible && desktopList.currentIndex < desktopList.count - 1)
+
+                    if (desktopList.currentIndex === desktopList.count - 1 && ! desktopList.currentItem.visible)
+                    {
+                        desktopList.currentIndex = index
+                    }
                 }
             }
 
@@ -310,12 +345,22 @@ ApplicationWindow {
                     root.keepLink = true;
                     event.accepted = true;
                 }
+                else if (event.key === Qt.Key_Control)
+                {
+                    root.moving = true;
+                    event.accepted = true;
+                }
             }
 
             Keys.onReleased: {
                 if (event.key === Qt.Key_Shift)
                 {
                     root.keepLink = false;
+                    event.accepted = true;
+                }
+                else if (event.key === Qt.Key_Control)
+                {
+                    root.moving = false;
                     event.accepted = true;
                 }
             }
@@ -506,6 +551,42 @@ ApplicationWindow {
                             }
                         }
                     }
+
+                    IconButton
+                    {
+                        id: moveDownButton
+                        anchors.right: delOpenLocationButton.left
+                        anchors.top: parent.top
+                        anchors.topMargin: (bgRect.height - height)/2
+                        height: 40
+                        width: height
+                        imageSource: "qrc:///img/keyboard_arrow_down.svg"
+                        ToolTip.text: qsTr("Move down") + translator.emptyString
+
+                        visible: desktopItemsDelegate.hovered
+
+                        onClicked: {
+                            moveUrl(false, index)
+                        }
+                    }
+
+                    IconButton
+                    {
+                        id: moveUpButton
+                        anchors.right: moveDownButton.left
+                        anchors.top: parent.top
+                        anchors.topMargin: (bgRect.height - height)/2
+                        height: 40
+                        width: height
+                        imageSource: "qrc:///img/keyboard_arrow_up.svg"
+                        ToolTip.text: qsTr("Move up") + translator.emptyString
+
+                        visible: desktopItemsDelegate.hovered
+
+                        onClicked: {
+                            moveUrl(true, index)
+                        }
+                    }
                 }
                 
                 
@@ -516,6 +597,8 @@ ApplicationWindow {
                     height: Math.max (delTrashButton.height, Math.max( delTextEdit.height, delText.height)) + 10 // Creates binding loop but oh well...
                     color: desktopItemsDelegate.highlighted ? Material.accent : Qt.darker(Material.accent)
                     visible: desktopItemsDelegate.highlighted || desktopItemsDelegate.hovered
+                    border.width: desktopItemsDelegate.highlighted && root.moving ? 3 : 1
+                    border.color:  desktopItemsDelegate.highlighted && root.moving ? Material.primary : color
                 }
                 
                 onClicked: {
@@ -582,6 +665,7 @@ ApplicationWindow {
                       qsTr("If you wish to open the folder containing an item, click on the folder icon which appears when hovering an item.")+"<br>" +
                       qsTr("To delete an item, click on the trashcan icon which appears when hovering the item.")+ "<br>" +
                       qsTr("To open an item with its default associated program, double-click an item.")+ "<br><br>" +
+                      qsTr("To reorder your items you can use the up arrow and down arrow buttons or click on \"Edit\" then \"Move up\" or \"Move down\".") + "<br><br>" +
                       qsTr("If an item is displayed in red and is striked out, this means the item does not exist anymore.")+ "<br>" +
                       qsTr("If you are trying to open an item and it does not work, maybe it has been deleted. Click the refresh button at the bottom of the window to refresh the display and check if it appears red.")+ "<br><br>" +
                       qsTr("You can rename an item by selecting it and then clicking \"Edit\" then \"Rename\". This will only rename the list entry and not the underlying file/folder/application.")+ "<br><br>" +
@@ -600,6 +684,8 @@ ApplicationWindow {
                       "<li><b><i>" + qsTr("Ctrl + H: ")+"</i></b>" + qsTr("opens this help page.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + W: ")+"</i></b>" + qsTr("closes the application.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + V: ")+"</i></b>" + qsTr("Add an item to the list by pasting from the clipboard.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + UpArrow: ")+"</i></b>" + qsTr("Move up the current item.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + DownArrow: ")+"</i></b>" + qsTr("Move down the current item.") + "</li>"+
                       "</ul>"  + translator.emptyString
                 wrapMode: Text.Wrap
             }
@@ -614,6 +700,12 @@ ApplicationWindow {
         placeholderText: qsTr("Search...") + translator.emptyString
         selectByMouse: true
         visible: desktopList.visible && desktopList.count > 0
+        color: root.moving ? "red" : Material.foreground
+
+        ToolTip.text: qsTr("You cannot move items while search bar is not empty") + translator.emptyString
+        ToolTip.visible: root.moving && text !== ""
+
+
         onFocusChanged: {
             if (focus)
                 renaming = false
@@ -815,6 +907,41 @@ ApplicationWindow {
         {
             openExternally(desktopList.currentIndex)
         }
+    }
+
+    function moveUrl(isGoingUp, indexToMove)
+    {
+        if (filterTextField.text !== "")
+        {
+            return desktopList.currentIndex
+        }
+
+        // Compute new index (clamped)
+        var NewIndex = Math.min(Math.max(isGoingUp ? indexToMove - 1 : indexToMove + 1, 0), desktopList.count);
+
+        if (NewIndex === indexToMove)
+        {
+            return
+        }
+
+
+        var ItemsCopy = root.desktopItems.slice()
+        var NamesCopy = root.desktopItemsNames.slice()
+
+        // Modifying lists
+        ItemsCopy.splice(NewIndex, 0, ItemsCopy.splice(indexToMove, 1)[0])
+        NamesCopy.splice(NewIndex, 0, NamesCopy.splice(indexToMove, 1)[0])
+
+        //Updating model
+        root.desktopItems = ItemsCopy
+        root.desktopItemsChanged()
+
+        root.desktopItemsNames = NamesCopy
+        root.desktopItemsNamesChanged()
+
+        refreshModel()
+
+        return NewIndex
     }
 
     function addUrls(urls)

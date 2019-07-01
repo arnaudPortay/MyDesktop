@@ -9,5 +9,7 @@
         <file>FR_fr.qm</file>
         <file>img/monitor.svg</file>
         <file>MainWindow.qml</file>
+        <file>img/keyboard_arrow_down.svg</file>
+        <file>img/keyboard_arrow_up.svg</file>
     </qresource>
 </RCC>
