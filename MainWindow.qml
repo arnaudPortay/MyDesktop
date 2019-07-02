@@ -345,7 +345,7 @@ ApplicationWindow {
                     root.keepLink = true;
                     event.accepted = true;
                 }
-                else if (event.key === Qt.Key_Control)
+                else if (event.key === Qt.Key_Control && !renaming)
                 {
                     root.moving = true;
                     event.accepted = true;
@@ -358,7 +358,7 @@ ApplicationWindow {
                     root.keepLink = false;
                     event.accepted = true;
                 }
-                else if (event.key === Qt.Key_Control)
+                else if (event.key === Qt.Key_Control && !renaming)
                 {
                     root.moving = false;
                     event.accepted = true;
@@ -510,7 +510,7 @@ ApplicationWindow {
                         leftPadding: 10
                         wrapMode: Text.Wrap
                         
-                        color: exists ? Material.foreground : Material.color(Material.Red)
+                        color: moving && desktopList.currentIndex === index ? Material.primary : exists ? Material.foreground : Material.color(Material.Red)
                     }
                     
                     IconButton {
@@ -523,6 +523,7 @@ ApplicationWindow {
                         width: height
                         imageSource: "qrc:///img/trash.svg"
                         ToolTip.text: qsTr("Delete") + translator.emptyString
+                        ToolTip.delay: 500
                         
                         visible: desktopItemsDelegate.hovered
                         
@@ -541,6 +542,7 @@ ApplicationWindow {
                         width: height
                         imageSource: hovered ? "qrc:///img/folderOpen.svg" : "qrc:///img/folder.svg"
                         ToolTip.text: qsTr("Open location") + translator.emptyString
+                        ToolTip.delay: 500
                         
                         visible: desktopItemsDelegate.hovered
                         
@@ -562,6 +564,7 @@ ApplicationWindow {
                         width: height
                         imageSource: "qrc:///img/keyboard_arrow_down.svg"
                         ToolTip.text: qsTr("Move down") + translator.emptyString
+                        ToolTip.delay: 500
 
                         visible: desktopItemsDelegate.hovered
 
@@ -580,6 +583,7 @@ ApplicationWindow {
                         width: height
                         imageSource: "qrc:///img/keyboard_arrow_up.svg"
                         ToolTip.text: qsTr("Move up") + translator.emptyString
+                        ToolTip.delay: 500
 
                         visible: desktopItemsDelegate.hovered
 
@@ -595,10 +599,8 @@ ApplicationWindow {
                     anchors.left: parent.left
                     width: 20
                     height: Math.max (delTrashButton.height, Math.max( delTextEdit.height, delText.height)) + 10 // Creates binding loop but oh well...
-                    color: desktopItemsDelegate.highlighted ? Material.accent : Qt.darker(Material.accent)
-                    visible: desktopItemsDelegate.highlighted || desktopItemsDelegate.hovered
-                    border.width: desktopItemsDelegate.highlighted && root.moving ? 3 : 1
-                    border.color:  desktopItemsDelegate.highlighted && root.moving ? Material.primary : color
+                    color: desktopItemsDelegate.highlighted ? moving ? Material.primary : Material.accent : Qt.darker(Material.accent)
+                    visible: desktopItemsDelegate.highlighted || desktopItemsDelegate.hovered                   
                 }
                 
                 onClicked: {
