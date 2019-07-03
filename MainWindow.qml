@@ -17,6 +17,8 @@ ApplicationWindow {
     Material.theme: darkTheme ? Material.Dark : Material.Light
     Material.accent: Material.Cyan
     
+
+    // *************************************   MENU BAR ******************************************
     menuBar: MenuBar {
         
         id: myMenuBar
@@ -63,7 +65,7 @@ ApplicationWindow {
                 onTriggered: {
                     Qt.quit()
                 }
-                shortcut: "Ctrl+W"
+                shortcut: "Ctrl+Q"
             }
         }
         
@@ -71,7 +73,7 @@ ApplicationWindow {
             title: qsTr("&Edit") + translator.emptyString
             
             Action {
-                text: qsTr("&Rename") + translator.emptyString
+                text: qsTr("&Rename item") + translator.emptyString
                 onTriggered: {
                     if (desktopList.visible)
                     {
@@ -94,7 +96,7 @@ ApplicationWindow {
             }
             
             Action {
-                text: qsTr("&Delete") + translator.emptyString
+                text: qsTr("&Delete item") + translator.emptyString
                 onTriggered: {
                     if (desktopList.visible)
                     {
@@ -108,18 +110,85 @@ ApplicationWindow {
             MenuSeparator{}
 
             Action {
-                text: qsTr("&Move up") + translator.emptyString
+                text: qsTr("&Rename custom tab") + translator.emptyString
+                onTriggered: {
+                    if (tabBar.currentIndex !== 0 && desktopList.visible)
+                    {
+                        renameTabDialog.open()
+                    }
+                }
+                enabled: tabBar.currentIndex !== 0
+                shortcut: "Shift+F2"
+            }
+
+            Action {
+                text: qsTr("&Add custom tab") + translator.emptyString
+                onTriggered: {
+                    addTabBar()
+                }
+                shortcut: "Ctrl+T"
+            }
+
+            Action {
+                text: qsTr("&Delete custom tab") + translator.emptyString
+                onTriggered: {
+                    if (tabBar.currentIndex !== 0 && desktopList.visible)
+                    {
+                        var copy = customTabs.slice()
+                        copy.splice(tabBar.currentIndex-1, 1)
+                        customTabs = copy
+                        refreshTabs()
+                    }
+                }
+                enabled: tabBar.currentIndex !== 0
+                shortcut: "Ctrl+W"
+            }
+
+            MenuSeparator{}
+
+            Action {
+                text: qsTr("&Move item up") + translator.emptyString
                 enabled: desktopList.currentIndex != 0
                 onTriggered: {
-                    desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
+                    if ( desktopList.visible)
+                    {
+                        desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
+                    }
                 }
             }
 
             Action {
-                text: qsTr("&Move down") + translator.emptyString
-                enabled: desktopList.currentIndex != desktopList.count
+                text: qsTr("&Move item down") + translator.emptyString
+                enabled: desktopList.currentIndex != desktopList.count - 1
                 onTriggered: {
-                    desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
+                    if ( desktopList.visible)
+                    {
+                        desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
+                    }
+                }
+            }
+
+            MenuSeparator{}
+
+            Action {
+                text: qsTr("&Move tab left") + translator.emptyString
+                enabled: tabBar.currentIndex > 1
+                onTriggered: {
+                    if ( desktopList.visible)
+                    {
+                        tabBar.currentIndex = moveTabBar(true, tabBar.currentIndex)
+                    }
+                }
+            }
+
+            Action {
+                text: qsTr("&Move tab right") + translator.emptyString
+                enabled: tabBar.currentIndex != tabBar.count - 1
+                onTriggered: {
+                    if ( desktopList.visible)
+                    {
+                        tabBar.currentIndex = moveTabBar(false, tabBar.currentIndex)
+                    }
                 }
             }
         }
@@ -134,7 +203,7 @@ ApplicationWindow {
                 onTriggered: {
                     root.darkTheme = !root.darkTheme
                 }
-                shortcut: "Ctrl+T"
+                shortcut: "Shift+T"
             }
             
             Menu{
@@ -191,6 +260,8 @@ ApplicationWindow {
                 shortcut: "Ctrl+H"
                 onTriggered: {
                     desktopList.visible = false
+                    tabBar.visible = false
+                    addTabButton.visible = false
                     helpRect.visible = true
                 }
             }
@@ -207,8 +278,11 @@ ApplicationWindow {
     }
     
     Component.onCompleted: {
-        refreshModel();
+        refreshModel()
         desktopList.currentIndex = 0
+
+        refreshTabs()
+        tabBar.currentIndex = 0
 
         root.visible = settings.showWindowAtStartup
     }
@@ -219,6 +293,7 @@ ApplicationWindow {
     
     property var desktopItems: []
     property var desktopItemsNames: []
+    property var customTabs: []
     property bool renaming: false
     property bool darkTheme: true
     property string language: "en"
@@ -228,12 +303,14 @@ ApplicationWindow {
     property bool keepLink: false
     property bool moving: false
     
+    // *************************************   SETTINGS ******************************************
     Settings {
         id: settings
         
         // Logic state
         property alias desktopItems: root.desktopItems
         property alias desktopItemsNames: root.desktopItemsNames
+        property alias customTabs: root.customTabs
         // Current filter
         property alias currentFilter: filterTextField.text
         
@@ -253,6 +330,7 @@ ApplicationWindow {
         property bool showWindowAtStartup: true;
     }
     
+    // *************************************   BASE RECTANGLE ******************************************
     Rectangle{
         id: baseRectangle
         anchors.fill: parent
@@ -271,7 +349,7 @@ ApplicationWindow {
         
         DropArea{
             id: globalDropArea
-            anchors.fill: parent
+            anchors.fill: desktopList
             
             onEntered: {
                 if (!drag.hasUrls)
@@ -288,13 +366,166 @@ ApplicationWindow {
             }
         }
         
+
+        TabBar {
+            id: tabBar
+            anchors.top: parent.top
+            width: parent.width - addTabButton.width
+            x:parent.x
+            clip: true
+            onCurrentIndexChanged: {
+                desktopList.forceActiveFocus()
+            }
+
+            Component {
+                id: tabButton
+                TabButton {
+                    text: qsTr("New Tab") + translator.emptyString
+                    width: implicitWidth + 20
+                    font.pointSize: 10
+
+                    onClicked: {
+                        //@TODO Change model
+                    }
+
+                    onDoubleClicked: {
+                        renameTabDialog.open()
+                    }
+                }
+            }
+
+            TabButton{
+                text:  qsTr("All") + translator.emptyString
+                width: implicitWidth + 20
+                font.pointSize: 10
+
+                onClicked: {
+                    //@TODO restore base model
+                }
+            }
+        }
+
+        Button{
+            id:addTabButton
+            anchors.right: parent.right
+            anchors.top: parent.top
+
+            contentItem : Text
+            {
+                id: addText
+                text: "+"
+                anchors.fill: parent
+                color: addTabButton.hovered ? Material.accent : Material.foreground
+                font.bold: true
+                font.pointSize: 10
+                verticalAlignment: Qt.AlignVCenter
+                horizontalAlignment: Qt.AlignHCenter
+            }
+
+            onClicked: {                
+                addTabBar()
+            }
+        }
+
+
+        TextField {
+            id: filterTextField
+
+            anchors.top: tabBar.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: parent.width * 0.2
+            anchors.rightMargin: parent.width * 0.2
+            anchors.topMargin: 5
+            anchors.bottomMargin: 5
+
+            placeholderText: qsTr("Search...") + translator.emptyString
+            selectByMouse: true
+            visible: desktopList.visible && desktopList.count > 0
+            color: root.moving ? "red" : Material.foreground
+
+            ToolTip.text: qsTr("You cannot move items while search bar is not empty") + translator.emptyString
+            ToolTip.visible: root.moving && text !== ""
+
+
+            onFocusChanged: {
+                if (focus)
+                    renaming = false
+            }
+
+            Shortcut {
+                sequence: "Ctrl+F"
+                onActivated: {
+                    filterTextField.focus = true
+                }
+            }
+
+            Keys.onShortcutOverride: {
+                event.accepted = (event.key === Qt.Key_Return)
+            }
+
+            onAccepted: {
+                desktopList.focus = true
+
+                if (!desktopList.currentItem.visible)
+                {
+                    desktopList.currentIndex = 0
+                }
+
+                if (!desktopList.currentItem.visible)
+                {
+                    do
+                    {
+                        desktopList.incrementCurrentIndex()
+                    }
+                    while (!desktopList.currentItem.visible && desktopList.currentIndex < desktopList.count - 1)
+                }
+            }
+            Keys.onEscapePressed: {
+                text = ""
+                desktopList.focus = true
+            }
+        }
+
+        // *************************************   LIST PAGE ******************************************
         ListView{
             id: desktopList
-            anchors.fill:parent
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.top: filterTextField.bottom
+
             clip: true
             focus: true
             model: desktopItemsModel
+
+            onCurrentIndexChanged: {
+                tabBar.focus = false
+            }
             
+
+            Keys.onLeftPressed: {
+                if (event.modifiers & Qt.ControlModifier)
+                {
+                    tabBar.currentIndex = moveTabBar(true, tabBar.currentIndex)
+                }
+            }
+
+            Keys.onRightPressed: {
+                if (event.modifiers & Qt.ControlModifier)
+                {
+                    tabBar.currentIndex = moveTabBar(false, tabBar.currentIndex)
+                }
+            }
+
+            Keys.onTabPressed: {
+                tabBar.incrementCurrentIndex()
+            }
+
+            Keys.onBacktabPressed: {
+                tabBar.decrementCurrentIndex()
+            }
+
             Keys.onUpPressed: {
 
                 if (event.modifiers & Qt.ControlModifier)
@@ -449,7 +680,7 @@ ApplicationWindow {
                         focus: false
                         
                         anchors.left: parent.left
-                        anchors.right: delOpenLocationButton.left
+                        anchors.right: moveUpButton.left
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
                         anchors.rightMargin: 5
@@ -469,7 +700,7 @@ ApplicationWindow {
                         
                         selectByMouse: true
                         wrapMode: TextEdit.Wrap
-                        
+
                         property bool hackityHack: true
                         
                         //Overload key pressed handlers to negate their effect
@@ -485,7 +716,7 @@ ApplicationWindow {
                             updateName(model.index, delTextEdit.text)
                         }
                         
-                        Keys.onEscapePressed: {root.renaming = false}
+                        Keys.onEscapePressed: {root.renaming = false;}
                         
                     }
                     
@@ -495,7 +726,7 @@ ApplicationWindow {
                         text: name
                         
                         anchors.left: parent.left
-                        anchors.right: delOpenLocationButton.left
+                        anchors.right: moveUpButton.left
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
                         anchors.rightMargin: 5
@@ -510,7 +741,7 @@ ApplicationWindow {
                         leftPadding: 10
                         wrapMode: Text.Wrap
                         
-                        color: moving && desktopList.currentIndex === index ? Material.primary : exists ? Material.foreground : Material.color(Material.Red)
+                        color: moving && desktopList.currentIndex === index ? Material.accent : exists ? Material.foreground : Material.color(Material.Red)
                     }
                     
                     IconButton {
@@ -599,7 +830,7 @@ ApplicationWindow {
                     anchors.left: parent.left
                     width: 20
                     height: Math.max (delTrashButton.height, Math.max( delTextEdit.height, delText.height)) + 10 // Creates binding loop but oh well...
-                    color: desktopItemsDelegate.highlighted ? moving ? Material.primary : Material.accent : Qt.darker(Material.accent)
+                    color: desktopItemsDelegate.highlighted ? Material.accent : Qt.darker(Material.accent)
                     visible: desktopItemsDelegate.highlighted || desktopItemsDelegate.hovered                   
                 }
                 
@@ -621,6 +852,8 @@ ApplicationWindow {
             }
         }
         
+
+        // *************************************   EMPTY PAGE ******************************************
         Text
         {
             id: emptyListTExt
@@ -638,6 +871,8 @@ ApplicationWindow {
             color: Material.color(Material.Grey)
         }
         
+
+        // *************************************   HELP PAGE ******************************************
         ScrollView{
             id: helpRect
             visible: false
@@ -661,18 +896,13 @@ ApplicationWindow {
                 font.pointSize: 10
                 text: "<h1>" + qsTr("My Desktop Help Page") + "</h1><br>" +
                       qsTr("My Desktop allows you to gather applications, files, folders and hyperlinks and to open them with their default program.")+ "<br>" +
-                      qsTr("You can also open the item location in the file explorer if said file is local.")+ "<br><br>"+
-                      qsTr("Drag and drop an item (file, folder, application etc...) onto the My Desktop window to add it to the list of available items.")+ "<br>" +
-                      qsTr("You can also paste a link to the item from the clipboard.") + "<br>" +
-                      qsTr("If you wish to open the folder containing an item, click on the folder icon which appears when hovering an item.")+"<br>" +
-                      qsTr("To delete an item, click on the trashcan icon which appears when hovering the item.")+ "<br>" +
-                      qsTr("To open an item with its default associated program, double-click an item.")+ "<br><br>" +
-                      qsTr("To reorder your items you can use the up arrow and down arrow buttons or click on \"Edit\" then \"Move up\" or \"Move down\".") + "<br><br>" +
+                      qsTr("You can also open the item location in the file explorer if said file is local.")+ "<br>"+
+                      qsTr("You can also paste a link to the item from the clipboard.") + "<br>" +                      
+                      qsTr("Double-click on an item to open it with its default associated program.")+ "<br><br>" +
                       qsTr("If an item is displayed in red and is striked out, this means the item does not exist anymore.")+ "<br>" +
-                      qsTr("If you are trying to open an item and it does not work, maybe it has been deleted. Click the refresh button at the bottom of the window to refresh the display and check if it appears red.")+ "<br><br>" +
-                      qsTr("You can rename an item by selecting it and then clicking \"Edit\" then \"Rename\". This will only rename the list entry and not the underlying file/folder/application.")+ "<br><br>" +
-                      qsTr("You can change the application language by clicking \"?\" then \"Language\".") + "<br>" + "<br>" +
-                      qsTr("You can make this application launch automatically at startup by clicking \"?\" then \"Launch at startup\".") + "<br>" + "<br>" +
+                      qsTr("There is a refresh button at the bottom of the window.")+ "<br><br>" +
+                      qsTr("You can change the application language by clicking \"?\" then \"Language\".") + "<br><br>" +
+                      qsTr("You can make this application launch automatically at startup by clicking \"?\" then \"Launch at startup\".") + "<br><br>" +
                       "<b>" + qsTr("Note: ")+"</b>"+qsTr("If you drag and drop a shortcut file onto the My Desktop window then what will be remembered is the shortcut target, not the shortcut itself, as such you can safely delete said shortcut.")+ "<br><br>" +
                       "<h2>" + qsTr("Shortcut list") + "</h2>" +
                       "<ul>" +
@@ -681,73 +911,26 @@ ApplicationWindow {
                       "<li><b><i>" + qsTr("Del: ")+"</i></b>" + qsTr("delete the selected item from the list.") + "</li>"+
                       "<li><b><i>" + qsTr("F2: ")+"</i></b>" + qsTr("rename the selected item. \"Enter\" to validate \"Esc\" to cancel.") + "</li>"+
                       "<li><b><i>" + qsTr("F5: ")+"</i></b>" + qsTr("refresh display.") + "</li>"+
-                      "<li><b><i>" + qsTr("Ctrl + T: ")+"</i></b>" + qsTr("switch between light and dark theme.") + "</li>"+
+                      "<li><b><i>" + qsTr("Shift + T: ")+"</i></b>" + qsTr("switch between light and dark theme.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + F: ")+"</i></b>" + qsTr("search shortcut.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + H: ")+"</i></b>" + qsTr("opens this help page.") + "</li>"+
-                      "<li><b><i>" + qsTr("Ctrl + W: ")+"</i></b>" + qsTr("closes the application.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + Q: ")+"</i></b>" + qsTr("closes the application.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + V: ")+"</i></b>" + qsTr("Add an item to the list by pasting from the clipboard.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + UpArrow: ")+"</i></b>" + qsTr("Move up the current item.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + DownArrow: ")+"</i></b>" + qsTr("Move down the current item.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + LeftArrow: ")+"</i></b>" + qsTr("Move left the current custom tab.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + RightArrow: ")+"</i></b>" + qsTr("Move right the current custom tab.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + W: ")+"</i></b>" + qsTr("Delete the current custom tab.") + "</li>"+
+                      "<li><b><i>" + qsTr("Ctrl + T: ")+"</i></b>" + qsTr("Add a custom tab.") + "</li>"+
+                      "<li><b><i>" + qsTr("Tab: ")+"</i></b>" + qsTr("Go to next tab.") + "</li>"+
+                      "<li><b><i>" + qsTr("Shift + Tab: ")+"</i></b>" + qsTr("Go to previous tab.") + "</li>"+
                       "</ul>"  + translator.emptyString
                 wrapMode: Text.Wrap
             }
         }
     }
     
-    
-    header: TextField {
-        id: filterTextField
-        width: parent.width * 0.77
-        anchors.centerIn: parent
-        placeholderText: qsTr("Search...") + translator.emptyString
-        selectByMouse: true
-        visible: desktopList.visible && desktopList.count > 0
-        color: root.moving ? "red" : Material.foreground
-
-        ToolTip.text: qsTr("You cannot move items while search bar is not empty") + translator.emptyString
-        ToolTip.visible: root.moving && text !== ""
-
-
-        onFocusChanged: {
-            if (focus)
-                renaming = false
-        }
-        
-        Shortcut {
-            sequence: "Ctrl+F"
-            onActivated: {
-                filterTextField.focus = true
-            }
-        }
-        
-        Keys.onShortcutOverride: {
-            event.accepted = (event.key === Qt.Key_Return)
-        }
-        
-        onAccepted: {
-            desktopList.focus = true
-            
-            if (!desktopList.currentItem.visible)
-            {
-                desktopList.currentIndex = 0
-            }
-            
-            if (!desktopList.currentItem.visible)
-            {
-                do
-                {
-                    desktopList.incrementCurrentIndex()
-                }
-                while (!desktopList.currentItem.visible && desktopList.currentIndex < desktopList.count - 1)
-            }
-        }
-        Keys.onEscapePressed: {
-            text = ""
-            desktopList.focus = true
-        }
-    }
-    
-    
+    // *************************************   FOOTER ******************************************
     footer: Rectangle {
         id: myFooter
         anchors.left: parent.left
@@ -777,11 +960,14 @@ ApplicationWindow {
             visible: helpRect.visible
             onClicked: {
                 desktopList.visible = true
+                tabBar.visible = true
+                addTabButton.visible = true
                 helpRect.visible = false
             }
         }
     }
     
+    // *************************************   ABOUT PAGE ******************************************
     Dialog {
         id: aboutDialog
         
@@ -809,6 +995,8 @@ ApplicationWindow {
         }
     }
     
+
+    // *************************************   UNSUPPORTED PAGE ******************************************
     Dialog {
         id: notSupportedDialog
         
@@ -829,11 +1017,81 @@ ApplicationWindow {
             anchors.fill: parent
         }
     }
+
+    // *************************************   RENAME TAB PAGE ******************************************
+    Dialog {
+        id: renameTabDialog
+
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        anchors.centerIn: parent
+        font.pointSize: 12
+
+        title: qsTr("Renaming Tab") + translator.emptyString
+
+        TextField
+        {
+            id: renameTextField
+            text: tabBar.currentItem.text
+            color: Material.foreground
+            selectionColor: Material.accent
+            font.family: "Segoe UI"
+            font.pointSize: 10
+            wrapMode: Text.Wrap
+            anchors.fill: parent
+            selectByMouse: true
+
+            Keys.onShortcutOverride: {
+                event.accepted = (event.key === Qt.Key_Return)
+            }
+
+            Keys.onEnterPressed: {
+                renameTabDialog.accept()
+            }
+
+            Keys.onReturnPressed: {
+                renameTabDialog.accept()
+            }
+
+            Keys.onEscapePressed: {
+                renameTabDialog.reject()
+            }
+        }
+
+        onOpened:{
+            renameTextField.text = tabBar.currentItem.text
+
+            renameTextField.forceActiveFocus()
+            renameTextField.selectAll()
+        }
+
+        onAccepted:{
+            updateTabName(tabBar.currentIndex, renameTextField.text)
+            desktopList.forceActiveFocus()
+        }
+
+        onRejected: {
+            desktopList.forceActiveFocus()
+        }
+    }
     
     ListModel {
         id: desktopItemsModel
     }
     
+
+    // *************************************   FUNCTIONS ******************************************
+
+    function updateTabName(index, newName)
+    {
+        var tabs = customTabs.slice()
+        tabs[index-1] = newName
+        customTabs = tabs
+        refreshTabs()
+    }
+
+    // *************************************
+
     function deleteItemAt(index)
     {
         if (root.renaming)
@@ -855,7 +1113,9 @@ ApplicationWindow {
         
         refreshModel()
     }
-    
+
+    // *************************************
+
     function updateName(index, newName)
     {
         var NamesCopy = root.desktopItemsNames.slice()
@@ -866,7 +1126,9 @@ ApplicationWindow {
         
         refreshModel()
     }
-    
+
+    // *************************************
+
     function refreshModel()
     {
         var currentIndex = desktopList.currentIndex
@@ -889,7 +1151,29 @@ ApplicationWindow {
         
         desktopList.currentIndex = Math.min(currentIndex, desktopList.count - 1)
     }
-    
+
+    // *************************************
+
+    function refreshTabs()
+    {
+        var currentIndex = tabBar.currentIndex
+        while (tabBar.count !== 1)
+        {
+            tabBar.removeItem(tabBar.itemAt(1))
+        }
+
+        for (var i=0; i< customTabs.length; i++)
+        {
+            var item = tabButton.createObject(tabBar)
+            item.text = customTabs[i]
+            tabBar.addItem(item)
+        }
+
+        tabBar.currentIndex = Math.min(currentIndex, tabBar.count - 1)
+    }
+
+    // *************************************
+
     function openExternally(index)
     {
         if (index === undefined)
@@ -899,7 +1183,9 @@ ApplicationWindow {
         
         Qt.openUrlExternally(root.desktopItems[index])
     }
-    
+
+    // *************************************
+
     function openExternallyCurrentItem(){
         if (root.renaming)
         {
@@ -911,6 +1197,8 @@ ApplicationWindow {
         }
     }
 
+    // *************************************
+
     function moveUrl(isGoingUp, indexToMove)
     {
         if (filterTextField.text !== "")
@@ -919,11 +1207,11 @@ ApplicationWindow {
         }
 
         // Compute new index (clamped)
-        var NewIndex = Math.min(Math.max(isGoingUp ? indexToMove - 1 : indexToMove + 1, 0), desktopList.count);
+        var NewIndex = Math.min(Math.max(isGoingUp ? indexToMove - 1 : indexToMove + 1, 0), desktopList.count - 1);
 
         if (NewIndex === indexToMove)
         {
-            return
+            return NewIndex
         }
 
 
@@ -945,6 +1233,34 @@ ApplicationWindow {
 
         return NewIndex
     }
+
+    // *************************************
+
+    function moveTabBar(isGoingLeft, indexToMove)
+    {
+        // Compute new index (clamped)
+        var NewIndex = Math.min(Math.max(isGoingLeft ? indexToMove - 1 : indexToMove + 1, 1), tabBar.count - 1) - 1;
+
+        if (NewIndex + 1 === indexToMove || indexToMove === 0)
+        {
+            return indexToMove
+        }
+
+
+        var tabsCopy = root.customTabs.slice()
+
+        // Modifying list
+        tabsCopy.splice(NewIndex, 0, tabsCopy.splice(indexToMove - 1, 1)[0])
+
+        //Updating model
+        root.customTabs = tabsCopy
+
+        refreshTabs()
+
+        return NewIndex + 1
+    }
+
+    // *************************************
 
     function addUrls(urls)
     {
@@ -1000,5 +1316,18 @@ ApplicationWindow {
         root.desktopItemsNamesChanged();
 
         refreshModel();
+    }
+
+    // *************************************
+
+    function addTabBar()
+    {
+        var tabs = customTabs.slice()
+        tabs.push(qsTr("New Tab") + translator.emptyString)
+        customTabs = tabs
+        refreshTabs()
+        tabBar.currentIndex = tabBar.count - 1
+
+        desktopList.forceActiveFocus()
     }
 }
