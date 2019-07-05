@@ -1353,10 +1353,8 @@ ApplicationWindow {
         var matrix = root.localToGlobalIndexMatrix.slice()
 
         // Modifying list
-        print(matrix)
         tabsCopy.splice(NewIndex, 0, tabsCopy.splice(indexToMove - 1, 1)[0])
         matrix.splice(NewIndex, 0, matrix.splice(indexToMove - 1, 1)[0])
-        print(matrix)
 
 
         //Updating model
