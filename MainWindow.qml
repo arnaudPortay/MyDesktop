@@ -1193,17 +1193,34 @@ ApplicationWindow {
         
         var lPath = ""
         var lExists = true
-        
-        for (var i =0; i < root.desktopItems.length; i++)
+        if (tabBar.currentIndex === 0 )
         {
-            lPath = root.desktopItems[i];
-            lExists = true
-            if (lPath.startsWith("file:///"))
+            for (var i =0; i < root.desktopItems.length; i++)
             {
-                lExists = File.exists(lPath)
+                lPath = root.desktopItems[i];
+                lExists = true
+                if (lPath.startsWith("file:///"))
+                {
+                    lExists = File.exists(lPath)
+                }
+
+                desktopItemsModel.append({"name": root.desktopItemsNames[i], "path": lPath, "exists": lExists})
             }
-            
-            desktopItemsModel.append({"name": root.desktopItemsNames[i], "path": lPath, "exists": lExists})
+        }
+        else
+        {
+            for (var j =0; j < root.localToGlobalIndexMatrix[tabBar.currentIndex].length; j++)
+            {
+                var globalIndex = root.localToGlobalIndexMatrix[tabBar.currentIndex][j]
+                lPath = root.desktopItems[globalIndex];
+                lExists = true
+                if (lPath.startsWith("file:///"))
+                {
+                    lExists = File.exists(lPath)
+                }
+
+                desktopItemsModel.append({"name": root.desktopItemsNames[globalIndex], "path": lPath, "exists": lExists})
+            }
         }
         
         desktopList.currentIndex = Math.min(currentIndex, desktopList.count - 1)
