@@ -63,6 +63,7 @@ ApplicationWindow {
             Action {
                 text: qsTr("&Quit") + translator.emptyString
                 onTriggered: {
+                    updateCurrentTabIndexSetting()
                     Qt.quit()
                 }
                 shortcut: "Ctrl+Q"
@@ -282,13 +283,14 @@ ApplicationWindow {
         desktopList.currentIndex = 0
 
         refreshTabs()
-        tabBar.currentIndex = 0
+        tabBar.currentIndex = settings.currentTab
 
         root.visible = settings.showWindowAtStartup
     }
     onClosing: {
         root.visible = false
         close.accepted = false
+        updateCurrentTabIndexSetting()
     }
     
     property var desktopItems: []
@@ -313,6 +315,8 @@ ApplicationWindow {
         property alias customTabs: root.customTabs
         // Current filter
         property alias currentFilter: filterTextField.text
+        //current Tab
+        property int currentTab
         
         // Window position and size
         property alias windowX: root.x
@@ -328,6 +332,7 @@ ApplicationWindow {
 
         // Window visibility at application startup
         property bool showWindowAtStartup: true;
+
     }
     
     // *************************************   BASE RECTANGLE ******************************************
@@ -1329,5 +1334,12 @@ ApplicationWindow {
         tabBar.currentIndex = tabBar.count - 1
 
         desktopList.forceActiveFocus()
+    }
+
+    // *************************************
+
+    function updateCurrentTabIndexSetting()
+    {
+        settings.currentTab = Math.min(Math.max(0,tabBar.currentIndex), tabBar.count - 1)
     }
 }

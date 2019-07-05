@@ -37,7 +37,10 @@ SystemTrayIcon {
         MenuSeparator {}
         MenuItem {
             text: qsTr("Exit") + translator.emptyString
-            onTriggered: Qt.quit()
+            onTriggered: {
+                window.updateCurrentTabIndexSetting()
+                Qt.quit()
+            }
         }
 
     }
