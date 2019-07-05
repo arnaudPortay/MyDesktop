@@ -49,7 +49,7 @@ ApplicationWindow {
                 onTriggered: {
                     if (!root.renaming && desktopList.visible)
                     {
-                        if (desktopItemsModel.get(desktopList.currentIndex).exists)
+                        if (desktopItemsModel.get(mapToGlobal(desktopList.currentIndex)).exists)
                         {
                             Qt.openUrlExternally(File.getDir(root.desktopItems[desktopList.currentIndex]))
                         }
@@ -383,6 +383,7 @@ ApplicationWindow {
             x:parent.x
             clip: true
             onCurrentIndexChanged: {
+                refreshModel()
                 desktopList.forceActiveFocus()
             }
 
@@ -514,14 +515,14 @@ ApplicationWindow {
             
 
             Keys.onLeftPressed: {
-                if (event.modifiers & Qt.ControlModifier)
+                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0)
                 {
                     tabBar.currentIndex = moveTabBar(true, tabBar.currentIndex)
                 }
             }
 
             Keys.onRightPressed: {
-                if (event.modifiers & Qt.ControlModifier)
+                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0)
                 {
                     tabBar.currentIndex = moveTabBar(false, tabBar.currentIndex)
                 }
@@ -537,11 +538,11 @@ ApplicationWindow {
 
             Keys.onUpPressed: {
 
-                if (event.modifiers & Qt.ControlModifier)
+                if (event.modifiers & Qt.ControlModifier && desktopList.count > 0)
                 {
                     desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
                 }
-                else
+                else if (desktopList.count > 0)
                 {
                     var index = desktopList.currentIndex
                     do
@@ -559,11 +560,11 @@ ApplicationWindow {
             
             Keys.onDownPressed: {
 
-                if (event.modifiers & Qt.ControlModifier)
+                if (event.modifiers & Qt.ControlModifier && desktopList.count > 0)
                 {
                     desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
                 }
-                else
+                else if (desktopList.count > 0)
                 {
                     var index = desktopList.currentIndex
                     do
@@ -845,7 +846,7 @@ ApplicationWindow {
                 
                 onClicked: {
                     
-                    if (!root.renaming || !desktopItemsModel.get(desktopList.currentIndex).exists)
+                    if (!root.renaming || !desktopItemsModel.get(mapToGlobal(desktopList.currentIndex)).exists)
                     {
                         root.renaming = false;
                         desktopList.currentIndex = model.index
@@ -865,13 +866,13 @@ ApplicationWindow {
         // *************************************   EMPTY PAGE ******************************************
         Text
         {
-            id: emptyListTExt
+            id: emptyListText
             
             anchors.fill: parent
             anchors.margins: 10
             text: qsTr("Drag and drop files, folders, applications, shortcuts or internet links.") + translator.emptyString
             font.family: "Segoe UI"
-            visible: desktopItems.length === 0
+            visible: desktopItemsModel.count === 0 && !helpRect.visible
             font.italic: true
             font.pointSize: 14
             wrapMode: Text.Wrap
@@ -1149,7 +1150,7 @@ ApplicationWindow {
 
             if (found !== -1)
             {
-                tab.splice(found,1)
+                matrixCopy[i].splice(found,1)
             }
         }
         
@@ -1176,7 +1177,7 @@ ApplicationWindow {
     function updateName(index, newName)
     {
         var NamesCopy = root.desktopItemsNames.slice()
-        NamesCopy.splice(mapToGobal(index), 1, newName)
+        NamesCopy.splice(mapToGlobal(index), 1, newName)
         root.desktopItemsNames = NamesCopy
         root.desktopItemsNamesChanged()
         root.renaming = false
@@ -1207,11 +1208,11 @@ ApplicationWindow {
                 desktopItemsModel.append({"name": root.desktopItemsNames[i], "path": lPath, "exists": lExists})
             }
         }
-        else
+        else if (root.desktopItems.length > 0)
         {
-            for (var j =0; j < root.localToGlobalIndexMatrix[tabBar.currentIndex].length; j++)
+            for (var j =0; j < root.localToGlobalIndexMatrix[tabBar.currentIndex - 1].length; j++)
             {
-                var globalIndex = root.localToGlobalIndexMatrix[tabBar.currentIndex][j]
+                var globalIndex = root.localToGlobalIndexMatrix[tabBar.currentIndex - 1][j]
                 lPath = root.desktopItems[globalIndex];
                 lExists = true
                 if (lPath.startsWith("file:///"))
@@ -1352,8 +1353,11 @@ ApplicationWindow {
         var matrix = root.localToGlobalIndexMatrix.slice()
 
         // Modifying list
+        print(matrix)
         tabsCopy.splice(NewIndex, 0, tabsCopy.splice(indexToMove - 1, 1)[0])
-        matrix.splice(NewIndex, 0, tabsCopy.splice(indexToMove - 1, 1)[0])
+        matrix.splice(NewIndex, 0, matrix.splice(indexToMove - 1, 1)[0])
+        print(matrix)
+
 
         //Updating model
         root.customTabs = tabsCopy
@@ -1416,7 +1420,7 @@ ApplicationWindow {
 
             if (addingToCustomTab)
             {
-                matrix[tabBar.currentIndex].push(ItemsCopy.length-1)
+                matrix[tabBar.currentIndex - 1].push(ItemsCopy.length-1)
             }
 
         }
