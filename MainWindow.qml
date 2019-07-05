@@ -135,10 +135,7 @@ ApplicationWindow {
                 onTriggered: {
                     if (tabBar.currentIndex !== 0 && desktopList.visible)
                     {
-                        var copy = customTabs.slice()
-                        copy.splice(tabBar.currentIndex-1, 1)
-                        customTabs = copy
-                        refreshTabs()
+                        deleteTab(tabBar.currentIndex)
                     }
                 }
                 enabled: tabBar.currentIndex !== 0
@@ -279,13 +276,14 @@ ApplicationWindow {
     }
     
     Component.onCompleted: {
-        refreshModel()
-        desktopList.currentIndex = 0
-
         refreshTabs()
         tabBar.currentIndex = settings.currentTab
 
+        refreshModel()
+        desktopList.currentIndex = 0
+
         root.visible = settings.showWindowAtStartup
+
     }
     onClosing: {
         root.visible = false
@@ -304,6 +302,9 @@ ApplicationWindow {
     }
     property bool keepLink: false
     property bool moving: false
+    // Array of array with the first array being the tabs and the inner array being as big as their number of items
+    // with the value being the global index in the model (ie in desktopItems and desktopItemsNames ) for customTabs
+    property var localToGlobalIndexMatrix: [[]]
     
     // *************************************   SETTINGS ******************************************
     Settings {
@@ -332,6 +333,9 @@ ApplicationWindow {
 
         // Window visibility at application startup
         property bool showWindowAtStartup: true;
+
+        // Tabs to global correspondance matrix for customTabs ONLY
+        property var localToGlobalIndexMatrix: root.localToGlobalIndexMatrix
 
     }
     
@@ -1087,6 +1091,23 @@ ApplicationWindow {
 
     // *************************************   FUNCTIONS ******************************************
 
+    function mapToGlobal(index)
+    {
+        if (tabBar.currentIndex === 0)
+        {
+            return index
+        }
+
+        if (index < localToGlobalIndexMatrix[tabBar.currentIndex-1].length)
+        {
+            return localToGlobalIndexMatrix[tabBar.currentIndex-1][index]
+        }
+
+        return localToGlobalIndexMatrix[tabBar.currentIndex-1].length
+    }
+
+    // *************************************
+
     function updateTabName(index, newName)
     {
         var tabs = customTabs.slice()
@@ -1104,19 +1125,50 @@ ApplicationWindow {
             root.renaming = false
         }
         
+
+        var globalIndex = mapToGlobal(index)
         var itemsCopy = root.desktopItems.slice()
-        itemsCopy.splice(index,1)
+        itemsCopy.splice(globalIndex,1)
         
         var namesCopy = root.desktopItemsNames.slice()
-        namesCopy.splice(index,1)
+        namesCopy.splice(globalIndex,1)
         
         root.desktopItems = itemsCopy
         root.desktopItemsChanged()
         
         root.desktopItemsNames = namesCopy
         root.desktopItemsNamesChanged()
+
+        // update tab map
+        var matrixCopy = localToGlobalIndexMatrix.slice()
+        for (var i = 0; i < matrixCopy.length; i++)
+        {
+            var found = matrixCopy[i].findIndex(function(element){
+                return element === globalIndex
+            })
+
+            if (found !== -1)
+            {
+                tab.splice(found,1)
+            }
+        }
         
+
+        //refresh
         refreshModel()
+    }
+
+    // *************************************
+
+    function deleteTab(index)
+    {
+        var copy = customTabs.slice()
+        var matrix = localToGlobalIndexMatrix.slice()
+        copy.splice(tabBar.currentIndex-1, 1)
+        matrix.splice(tabBar.currentIndex-1, 1)
+        customTabs = copy
+        localToGlobalIndexMatrix = matrix
+        refreshTabs()
     }
 
     // *************************************
@@ -1124,7 +1176,7 @@ ApplicationWindow {
     function updateName(index, newName)
     {
         var NamesCopy = root.desktopItemsNames.slice()
-        NamesCopy.splice(index, 1, newName)
+        NamesCopy.splice(mapToGobal(index), 1, newName)
         root.desktopItemsNames = NamesCopy
         root.desktopItemsNamesChanged()
         root.renaming = false
@@ -1181,22 +1233,24 @@ ApplicationWindow {
 
     function openExternally(index)
     {
-        if (index === undefined)
+        var globalIndex = mapToGlobal(index)
+        if (globalIndex === undefined)
         {
-            index = 0
+            globalIndex = 0
         }
         
-        Qt.openUrlExternally(root.desktopItems[index])
+        Qt.openUrlExternally(root.desktopItems[globalIndex])
     }
 
     // *************************************
 
-    function openExternallyCurrentItem(){
+    function openExternallyCurrentItem()
+    {
         if (root.renaming)
         {
             root.renaming = false
         }
-        else if (desktopItemsModel.get(desktopList.currentIndex).exists)
+        else if (desktopItemsModel.get(mapToGlobal(desktopList.currentIndex)).exists)
         {
             openExternally(desktopList.currentIndex)
         }
@@ -1219,20 +1273,45 @@ ApplicationWindow {
             return NewIndex
         }
 
+        var matrix = root.localToGlobalIndexMatrix.slice()
 
-        var ItemsCopy = root.desktopItems.slice()
-        var NamesCopy = root.desktopItemsNames.slice()
+        if (tabBar.currentIndex !== 0)
+        {
+            matrix[tabBar.currentIndex-1].splice(NewIndex, 0, matrix[tabBar.currentIndex-1].splice(indexToMove, 1)[0])
+        }
+        else
+        {
+            var ItemsCopy = root.desktopItems.slice()
+            var NamesCopy = root.desktopItemsNames.slice()
 
-        // Modifying lists
-        ItemsCopy.splice(NewIndex, 0, ItemsCopy.splice(indexToMove, 1)[0])
-        NamesCopy.splice(NewIndex, 0, NamesCopy.splice(indexToMove, 1)[0])
+            // Modifying lists
+            ItemsCopy.splice(NewIndex, 0, ItemsCopy.splice(indexToMove, 1)[0])
+            NamesCopy.splice(NewIndex, 0, NamesCopy.splice(indexToMove, 1)[0])
 
-        //Updating model
-        root.desktopItems = ItemsCopy
-        root.desktopItemsChanged()
+            // update tab map
+            var matrixCopy = localToGlobalIndexMatrix.slice()
+            for (var i = 0; i < matrixCopy.length; i++)
+            {
+                var found = matrixCopy[i].findIndex(function(element){
+                    return element === indexToMove
+                })
 
-        root.desktopItemsNames = NamesCopy
-        root.desktopItemsNamesChanged()
+                if (found !== -1)
+                {
+                    matrixCopy[i][found] = NewIndex
+                }
+            }
+
+            //Updating model
+            root.desktopItems = ItemsCopy
+            root.desktopItemsChanged()
+
+            root.desktopItemsNames = NamesCopy
+            root.desktopItemsNamesChanged()
+        }
+
+
+        root.localToGlobalIndexMatrix = matrix
 
         refreshModel()
 
@@ -1253,12 +1332,15 @@ ApplicationWindow {
 
 
         var tabsCopy = root.customTabs.slice()
+        var matrix = root.localToGlobalIndexMatrix.slice()
 
         // Modifying list
         tabsCopy.splice(NewIndex, 0, tabsCopy.splice(indexToMove - 1, 1)[0])
+        matrix.splice(NewIndex, 0, tabsCopy.splice(indexToMove - 1, 1)[0])
 
         //Updating model
         root.customTabs = tabsCopy
+        root.localToGlobalIndexMatrix = matrix
 
         refreshTabs()
 
@@ -1271,12 +1353,14 @@ ApplicationWindow {
     {
         var ItemsCopy = root.desktopItems.slice()
         var NamesCopy = root.desktopItemsNames.slice()
+        var matrix = root.localToGlobalIndexMatrix.slice()
 
         var currentUrl = ""
         var currentName = ""
         var currentExtension = ""
         var lNewExtension = ""
         var dirs = []
+        var addingToCustomTab = tabBar.currentIndex !== 0
 
         for (var i=0; i < urls.length; i++){
 
@@ -1312,15 +1396,22 @@ ApplicationWindow {
             }
 
             ItemsCopy.push(currentUrl)
+
+            if (addingToCustomTab)
+            {
+                matrix[tabBar.currentIndex].push(ItemsCopy.length-1)
+            }
+
         }
 
-        root.desktopItems = ItemsCopy;
-        root.desktopItemsNames = NamesCopy;
+        root.desktopItems = ItemsCopy
+        root.desktopItemsNames = NamesCopy
+        root.localToGlobalIndexMatrix = matrix
 
-        root.desktopItemsChanged();
-        root.desktopItemsNamesChanged();
+        root.desktopItemsChanged()
+        root.desktopItemsNamesChanged()
 
-        refreshModel();
+        refreshModel()
     }
 
     // *************************************
@@ -1328,10 +1419,13 @@ ApplicationWindow {
     function addTabBar()
     {
         var tabs = customTabs.slice()
+        var matrix = localToGlobalIndexMatrix.slice()
         tabs.push(qsTr("New Tab") + translator.emptyString)
+        matrix.push([])
         customTabs = tabs
+        localToGlobalIndexMatrix = matrix
         refreshTabs()
-        tabBar.currentIndex = tabBar.count - 1
+        tabBar.currentIndex = tabBar.count - 1        
 
         desktopList.forceActiveFocus()
     }
