@@ -1555,6 +1555,7 @@ ApplicationWindow {
 
         // Compute new index (clamped)
         var NewIndex = Math.min(Math.max(isGoingUp ? indexToMove - 1 : indexToMove + 1, 0), desktopList.count - 1);
+        var otherIndex = Math.min(Math.max(isGoingUp ? indexToMove + 1 : indexToMove - 1, 0), desktopList.count - 1);
 
         if (NewIndex === indexToMove)
         {
@@ -1580,13 +1581,19 @@ ApplicationWindow {
             var matrixCopy = localToGlobalIndexMatrix.slice()
             for (var i = 0; i < matrixCopy.length; i++)
             {
-                var found = matrixCopy[i].findIndex(function(element){
-                    return element === indexToMove
-                })
 
-                if (found !== -1)
+                for (var j = 0; j < matrixCopy[i].length; j++)
                 {
-                    matrixCopy[i][found] = NewIndex
+                    // Update new index
+                    if (matrixCopy[i][j] === indexToMove )
+                    {
+                        matrixCopy[i][j] = NewIndex
+                    }
+                    //Update other index (the one we switched with )
+                    else if (matrixCopy[i][j] === NewIndex)
+                    {
+                        matrixCopy[i][j] = otherIndex
+                    }
                 }
             }
 
