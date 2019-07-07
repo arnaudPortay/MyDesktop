@@ -37,7 +37,7 @@ ApplicationWindow {
                 text: qsTr("&Launch selected item")+ translator.emptyString
                 shortcut: "Return"
                 onTriggered:{
-                    if (!root.renaming && desktopList.visible && !filterTextField.focus)
+                    if (!root.renaming && desktopList.visible && !filterTextField.focus && !dialogVisible)
                     {
                         openExternallyCurrentItem()
                     }
@@ -47,7 +47,7 @@ ApplicationWindow {
             Action {
                 text: qsTr("&Open location") + translator.emptyString
                 onTriggered: {
-                    if (!root.renaming && desktopList.visible)
+                    if (!root.renaming && desktopList.visible && !dialogVisible)
                     {
                         if (desktopItemsModel.get(mapToGlobalIndex(desktopList.currentIndex)).exists)
                         {
@@ -80,7 +80,7 @@ ApplicationWindow {
                     id: renameItemAction
                     text: qsTr("&Rename item") + translator.emptyString
                     onTriggered: {
-                        if (desktopList.visible)
+                        if (desktopList.visible && !dialogVisible)
                         {
                             root.renaming = true
                         }
@@ -91,7 +91,7 @@ ApplicationWindow {
                     id: deleteItemAction
                     text: qsTr("&Delete item") + translator.emptyString
                     onTriggered: {
-                        if (desktopList.visible && desktopList.currentIndex >= 0 && desktopList.currentIndex < desktopList.count)
+                        if (desktopList.visible && desktopList.currentIndex >= 0 && desktopList.currentIndex < desktopList.count && !dialogVisible)
                         {
                             root.renaming = false
 
@@ -126,7 +126,7 @@ ApplicationWindow {
                     text: qsTr("&Move item up") + translator.emptyString
                     enabled: desktopList.currentIndex != 0 && desktopList.count != 0
                     onTriggered: {
-                        if ( desktopList.visible && !root.renaming)
+                        if ( desktopList.visible && !root.renaming && !dialogVisible)
                         {
                             desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
                         }
@@ -137,7 +137,7 @@ ApplicationWindow {
                     text: qsTr("&Move item down") + translator.emptyString
                     enabled: desktopList.currentIndex != desktopList.count - 1
                     onTriggered: {
-                        if ( desktopList.visible && !root.renaming)
+                        if ( desktopList.visible && !root.renaming && !dialogVisible)
                         {
                             desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
                         }
@@ -152,7 +152,7 @@ ApplicationWindow {
                     id: renameTabAction
                     text: qsTr("&Rename custom tab") + translator.emptyString
                     onTriggered: {
-                        if (tabBar.currentIndex !== 0 && desktopList.visible)
+                        if (tabBar.currentIndex !== 0 && desktopList.visible && !dialogVisible)
                         {
                             renameTabDialog.open()
                         }
@@ -164,7 +164,7 @@ ApplicationWindow {
                     id: deleteTabAction
                     text: qsTr("&Delete custom tab") + translator.emptyString
                     onTriggered: {
-                        if (tabBar.currentIndex !== 0 && desktopList.visible)
+                        if (tabBar.currentIndex !== 0 && desktopList.visible && !dialogVisible)
                         {
                             renaming = false
                             deleteTab(tabBar.currentIndex)
@@ -324,10 +324,13 @@ ApplicationWindow {
                 text: qsTr("&Help") + translator.emptyString
                 shortcut: "Ctrl+H"
                 onTriggered: {
-                    desktopList.visible = false
-                    tabBar.visible = false
-                    addTabButton.visible = false
-                    helpRect.visible = true
+                    if (!dialogVisible)
+                    {
+                        desktopList.visible = false
+                        tabBar.visible = false
+                        addTabButton.visible = false
+                        helpRect.visible = true
+                    }
                 }
             }
             
@@ -373,6 +376,7 @@ ApplicationWindow {
     // with the value being the global index in the model (ie in desktopItems and desktopItemsNames ) for customTabs
     property var localToGlobalIndexMatrix: []
     property int deletionBehaviour: 0
+    property bool dialogVisible: deleteBehaviorDialog.visible || notSupportedDialog.visible || aboutDialog.visible
     
     // *************************************   SETTINGS ******************************************
     Settings {
@@ -419,7 +423,7 @@ ApplicationWindow {
         Shortcut {
             sequences: [StandardKey.Paste, "Ctrl+Shift+V"]
             onActivated: {
-                if (desktopList.visible && Clipboard.getUrls().length > 0)
+                if (desktopList.visible && Clipboard.getUrls().length > 0 && !dialogVisible)
                 {
                     addUrls(Clipboard.getUrls())
                 }
@@ -640,34 +644,36 @@ ApplicationWindow {
 
 
             Keys.onLeftPressed: {
-                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0 && !root.renaming)
+                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0 && !root.renaming && !dialogVisible)
                 {
                     tabBar.currentIndex = moveTabBar(true, tabBar.currentIndex)
                 }
             }
 
             Keys.onRightPressed: {
-                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0 && !root.renaming)
+                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0 && !root.renaming && !dialogVisible)
                 {
                     tabBar.currentIndex = moveTabBar(false, tabBar.currentIndex)
                 }
             }
 
             Keys.onTabPressed: {
-                tabBar.incrementCurrentIndex()
+                if (!dialogVisible)
+                    tabBar.incrementCurrentIndex()
             }
 
             Keys.onBacktabPressed: {
-                tabBar.decrementCurrentIndex()
+                if (!dialogVisible)
+                    tabBar.decrementCurrentIndex()
             }
 
             Keys.onUpPressed: {
 
-                if (event.modifiers & Qt.ControlModifier && desktopList.count > 0)
+                if (event.modifiers & Qt.ControlModifier && desktopList.count > 0 && !dialogVisible)
                 {
                     desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
                 }
-                else if (desktopList.count > 0)
+                else if (desktopList.count > 0 && !dialogVisible)
                 {
                     var index = desktopList.currentIndex
                     do
@@ -685,11 +691,11 @@ ApplicationWindow {
 
             Keys.onDownPressed: {
 
-                if (event.modifiers & Qt.ControlModifier && desktopList.count > 0)
+                if (event.modifiers & Qt.ControlModifier && desktopList.count > 0 && !dialogVisible)
                 {
                     desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
                 }
-                else if (desktopList.count > 0)
+                else if (desktopList.count > 0 && !dialogVisible)
                 {
                     var index = desktopList.currentIndex
                     do
@@ -928,6 +934,8 @@ ApplicationWindow {
 
                         visible: desktopItemsDelegate.hovered
 
+                        enabled: !renaming
+
                         Material.background: Material.color(Material.Red)
                         onClicked: {
                             deleteItemAt(index)
@@ -946,6 +954,8 @@ ApplicationWindow {
                         ToolTip.delay: 500
 
                         visible: desktopItemsDelegate.hovered
+
+                        enabled: !renaming
 
                         onClicked: {
                             if (exists)
@@ -969,6 +979,8 @@ ApplicationWindow {
 
                         visible: desktopItemsDelegate.hovered
 
+                        enabled: !renaming
+
                         onClicked: {
                             moveUrl(false, index)
                         }
@@ -987,6 +999,8 @@ ApplicationWindow {
                         ToolTip.delay: 500
 
                         visible: desktopItemsDelegate.hovered
+
+                        enabled: !renaming
 
                         onClicked: {
                             moveUrl(true, index)
@@ -1235,11 +1249,30 @@ ApplicationWindow {
         id: deleteBehaviorDialog
 
         modal: true
-        standardButtons: Dialog.Ok | Dialog.Cancel
         anchors.centerIn: parent
         font.pointSize: 12
         height: implicitHeight + 50
         title: qsTr("Deleting item") + translator.emptyString
+
+        footer: DialogButtonBox {
+            Button{
+                text: qsTr("Delete from tab") + translator.emptyString
+                flat: true
+                DialogButtonBox.buttonRole:  DialogButtonBox.AcceptRole
+            }
+
+            Button{
+                text: qsTr("Permanently delete") + translator.emptyString
+                flat: true
+                DialogButtonBox.buttonRole:  DialogButtonBox.AcceptRole
+            }
+
+            Button{
+                text: qsTr("Cancel") + translator.emptyString
+                flat: true
+                DialogButtonBox.buttonRole:  DialogButtonBox.RejectRole
+            }
+        }
 
         Text
         {
@@ -1261,29 +1294,19 @@ ApplicationWindow {
                 font.pointSize: 10
             }
 
-//            Keys.onShortcutOverride: {
-//                event.accepted = (event.key === Qt.Key_Return)
-//            }
-
-//            Keys.onEnterPressed: {
-//                renameTabDialog.accept()
-//            }
-
-//            Keys.onReturnPressed: {
-//                renameTabDialog.accept()
-//            }
-
-//            Keys.onEscapePressed: {
-//                renameTabDialog.reject()
-//            }
+            Keys.onEscapePressed: {
+                renameTabDialog.reject()
+            }
         }
 
         onAccepted:{
             //@TODO
+            print("toto")
             desktopList.forceActiveFocus()
         }
 
         onRejected: {
+            print("bla")
             desktopList.forceActiveFocus()
         }
     }
