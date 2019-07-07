@@ -72,17 +72,123 @@ ApplicationWindow {
         
         Menu {
             title: qsTr("&Edit") + translator.emptyString
-            
-            Action {
-                text: qsTr("&Rename item") + translator.emptyString
-                onTriggered: {
-                    if (desktopList.visible)
-                    {
-                        root.renaming = true
+
+            Menu {
+                title: qsTr("&Item") + translator.emptyString
+
+                Action {
+                    id: renameItemAction
+                    text: qsTr("&Rename item") + translator.emptyString
+                    onTriggered: {
+                        if (desktopList.visible)
+                        {
+                            root.renaming = true
+                        }
                     }
                 }
-                shortcut: "F2"
+
+                Action {
+                    id: deleteItemAction
+                    text: qsTr("&Delete item") + translator.emptyString
+                    onTriggered: {
+                        if (desktopList.visible)
+                        {
+                            root.renaming = false
+                            deleteItemAt(desktopList.currentIndex)
+                        }
+                    }
+                }
+
+                MenuSeparator{}
+
+                Action {
+                    text: qsTr("&Move item up") + translator.emptyString
+                    enabled: desktopList.currentIndex != 0 && desktopList.count != 0
+                    onTriggered: {
+                        if ( desktopList.visible)
+                        {
+                            desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
+                        }
+                    }
+                }
+
+                Action {
+                    text: qsTr("&Move item down") + translator.emptyString
+                    enabled: desktopList.currentIndex != desktopList.count - 1
+                    onTriggered: {
+                        if ( desktopList.visible)
+                        {
+                            desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
+                        }
+                    }
+                }
             }
+
+            Menu {
+                title: qsTr("&Tab") + translator.emptyString
+
+                Action {
+                    id: renameTabAction
+                    text: qsTr("&Rename custom tab") + translator.emptyString
+                    onTriggered: {
+                        if (tabBar.currentIndex !== 0 && desktopList.visible)
+                        {
+                            renameTabDialog.open()
+                        }
+                    }
+                    enabled: tabBar.currentIndex !== 0
+                }
+
+                Action {
+                    id: deleteTabAction
+                    text: qsTr("&Delete custom tab") + translator.emptyString
+                    onTriggered: {
+                        if (tabBar.currentIndex !== 0 && desktopList.visible)
+                        {
+                            renaming = false
+                            deleteTab(tabBar.currentIndex)
+                        }
+                    }
+                    enabled: tabBar.currentIndex !== 0
+                }
+
+                Action {
+                    id: addTabAction
+                    text: qsTr("&Add custom tab") + translator.emptyString
+                    onTriggered: {
+                        renaming = false
+                        addTabBar()
+                    }
+                }
+
+                MenuSeparator{}
+
+                Action {
+                    text: qsTr("&Move tab left") + translator.emptyString
+                    enabled: tabBar.currentIndex > 1
+                    onTriggered: {
+                        if ( desktopList.visible)
+                        {
+                            renaming = false
+                            tabBar.currentIndex = moveTabBar(true, tabBar.currentIndex)
+                        }
+                    }
+                }
+
+                Action {
+                    text: qsTr("&Move tab right") + translator.emptyString
+                    enabled: tabBar.currentIndex != tabBar.count - 1
+                    onTriggered: {
+                        if ( desktopList.visible)
+                        {
+                            renaming = false
+                            tabBar.currentIndex = moveTabBar(false, tabBar.currentIndex)
+                        }
+                    }
+                }
+            }
+
+            MenuSeparator{}
             
             Action {
                 text: qsTr("&Refresh") + translator.emptyString
@@ -94,100 +200,6 @@ ApplicationWindow {
                     }
                 }
                 shortcut: StandardKey.Refresh
-            }
-            
-            Action {
-                text: qsTr("&Delete item") + translator.emptyString
-                onTriggered: {
-                    if (desktopList.visible)
-                    {
-                        root.renaming = false
-                        deleteItemAt(desktopList.currentIndex)
-                    }
-                }
-                shortcut: StandardKey.Delete
-            }
-
-            MenuSeparator{}
-
-            Action {
-                text: qsTr("&Rename custom tab") + translator.emptyString
-                onTriggered: {
-                    if (tabBar.currentIndex !== 0 && desktopList.visible)
-                    {
-                        renameTabDialog.open()
-                    }
-                }
-                enabled: tabBar.currentIndex !== 0
-                shortcut: "Shift+F2"
-            }
-
-            Action {
-                text: qsTr("&Add custom tab") + translator.emptyString
-                onTriggered: {
-                    addTabBar()
-                }
-                shortcut: "Ctrl+T"
-            }
-
-            Action {
-                text: qsTr("&Delete custom tab") + translator.emptyString
-                onTriggered: {
-                    if (tabBar.currentIndex !== 0 && desktopList.visible)
-                    {
-                        deleteTab(tabBar.currentIndex)
-                    }
-                }
-                enabled: tabBar.currentIndex !== 0
-                shortcut: "Ctrl+W"
-            }
-
-            MenuSeparator{}
-
-            Action {
-                text: qsTr("&Move item up") + translator.emptyString
-                enabled: desktopList.currentIndex != 0
-                onTriggered: {
-                    if ( desktopList.visible)
-                    {
-                        desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
-                    }
-                }
-            }
-
-            Action {
-                text: qsTr("&Move item down") + translator.emptyString
-                enabled: desktopList.currentIndex != desktopList.count - 1
-                onTriggered: {
-                    if ( desktopList.visible)
-                    {
-                        desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
-                    }
-                }
-            }
-
-            MenuSeparator{}
-
-            Action {
-                text: qsTr("&Move tab left") + translator.emptyString
-                enabled: tabBar.currentIndex > 1
-                onTriggered: {
-                    if ( desktopList.visible)
-                    {
-                        tabBar.currentIndex = moveTabBar(true, tabBar.currentIndex)
-                    }
-                }
-            }
-
-            Action {
-                text: qsTr("&Move tab right") + translator.emptyString
-                enabled: tabBar.currentIndex != tabBar.count - 1
-                onTriggered: {
-                    if ( desktopList.visible)
-                    {
-                        tabBar.currentIndex = moveTabBar(false, tabBar.currentIndex)
-                    }
-                }
             }
         }
         
@@ -353,6 +365,41 @@ ApplicationWindow {
                 {
                     addUrls(Clipboard.getUrls())
                 }
+            }
+        }
+
+        Shortcut {
+            sequences: ["F2"]
+            onActivated: {
+                renameItemAction.trigger()
+            }
+        }
+
+        Shortcut {
+            sequences: [StandardKey.Delete]
+            onActivated:{
+                deleteItemAction.trigger()
+            }
+        }
+
+        Shortcut{
+            sequences: ["Shift+F2"]
+            onActivated: {
+                renameTabAction.trigger()
+            }
+        }
+
+        Shortcut{
+            sequences: ["Ctrl+W"]
+            onActivated: {
+                deleteTabAction.trigger()
+            }
+        }
+
+        Shortcut{
+            sequences: ["Ctrl+T"]
+            onActivated: {
+                addTabAction.trigger()
             }
         }
         
@@ -727,6 +774,7 @@ ApplicationWindow {
                                 target: delTextEdit
                                 hackityHack:{
                                     selectAll()
+                                    delTextEdit.forceActiveFocus()
                                     true
                                 }
                             }
