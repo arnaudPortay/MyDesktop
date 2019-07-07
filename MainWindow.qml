@@ -91,34 +91,7 @@ ApplicationWindow {
                     id: deleteItemAction
                     text: qsTr("&Delete item") + translator.emptyString
                     onTriggered: {
-                        if (desktopList.visible && desktopList.currentIndex >= 0 && desktopList.currentIndex < desktopList.count && !dialogVisible)
-                        {
-                            root.renaming = false
-
-                            if (tabBar.currentIndex === 0)
-                            {
-                                deleteItemAt(desktopList.currentIndex)
-                            }
-                            else
-                            {
-                                switch (deletionBehaviour)
-                                {
-                                case 0:
-                                    deleteBehaviorDialog.index = desktopList.currentIndex
-                                    deleteBehaviorDialog.tabIndex = tabBar.currentIndex-1
-                                    deleteBehaviorDialog.open()
-                                    break
-                                case 1:
-                                    deleteItemFromTab(tabBar.currentIndex-1, desktopList.currentIndex)
-                                    break
-                                case 2:
-                                    deleteItemAt(desktopList.currentIndex)
-                                    break
-                                default:
-                                    break
-                                }
-                            }
-                        }
+                        deleteWrapper(tabBar.currentIndex, desktopList.currentIndex)
                     }
                 }
 
@@ -940,7 +913,7 @@ ApplicationWindow {
 
                         Material.background: Material.color(Material.Red)
                         onClicked: {
-                            deleteItemAt(index)
+                            deleteWrapper(tabBar.currentIndex, index)
                         }
                     }
 
@@ -1431,6 +1404,40 @@ ApplicationWindow {
 
     // *************************************
 
+    function deleteWrapper(tabIndex, itemIndex)
+    {
+        if (desktopList.visible && itemIndex >= 0 && itemIndex < desktopList.count && !dialogVisible)
+        {
+            root.renaming = false
+
+            if (tabBar.currentIndex === 0)
+            {
+                deleteItemAt(itemIndex)
+            }
+            else
+            {
+                switch (deletionBehaviour)
+                {
+                case 0:
+                    deleteBehaviorDialog.index = itemIndex
+                    deleteBehaviorDialog.tabIndex = tabIndex-1
+                    deleteBehaviorDialog.open()
+                    break
+                case 1:
+                    deleteItemFromTab(tabIndex-1, itemIndex)
+                    break
+                case 2:
+                    deleteItemAt(itemIndex)
+                    break
+                default:
+                    break
+                }
+            }
+        }
+    }
+
+    // *************************************
+
     function deleteTab(index)
     {
         var copy = customTabs.slice()
@@ -1555,7 +1562,6 @@ ApplicationWindow {
 
         // Compute new index (clamped)
         var NewIndex = Math.min(Math.max(isGoingUp ? indexToMove - 1 : indexToMove + 1, 0), desktopList.count - 1);
-        var otherIndex = Math.min(Math.max(isGoingUp ? indexToMove + 1 : indexToMove - 1, 0), desktopList.count - 1);
 
         if (NewIndex === indexToMove)
         {
@@ -1592,7 +1598,7 @@ ApplicationWindow {
                     //Update other index (the one we switched with )
                     else if (matrixCopy[i][j] === NewIndex)
                     {
-                        matrixCopy[i][j] = otherIndex
+                        matrixCopy[i][j] = indexToMove
                     }
                 }
             }
