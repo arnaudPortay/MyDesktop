@@ -49,7 +49,7 @@ ApplicationWindow {
                 onTriggered: {
                     if (!root.renaming && desktopList.visible)
                     {
-                        if (desktopItemsModel.get(mapToGlobal(desktopList.currentIndex)).exists)
+                        if (desktopItemsModel.get(mapToGlobalIndex(desktopList.currentIndex)).exists)
                         {
                             Qt.openUrlExternally(File.getDir(root.desktopItems[desktopList.currentIndex]))
                         }
@@ -304,7 +304,7 @@ ApplicationWindow {
     property bool moving: false
     // Array of array with the first array being the tabs and the inner array being as big as their number of items
     // with the value being the global index in the model (ie in desktopItems and desktopItemsNames ) for customTabs
-    property var localToGlobalIndexMatrix: [[]]
+    property var localToGlobalIndexMatrix: []
     
     // *************************************   SETTINGS ******************************************
     Settings {
@@ -335,7 +335,7 @@ ApplicationWindow {
         property bool showWindowAtStartup: true;
 
         // Tabs to global correspondance matrix for customTabs ONLY
-        property var localToGlobalIndexMatrix: root.localToGlobalIndexMatrix
+        property alias localToGlobalIndexMatrix: root.localToGlobalIndexMatrix
 
     }
     
@@ -394,12 +394,36 @@ ApplicationWindow {
                     width: implicitWidth + 20
                     font.pointSize: 10
 
-                    onClicked: {
-                        //@TODO Change model
-                    }
-
                     onDoubleClicked: {
                         renameTabDialog.open()
+                    }
+
+                    DropArea{
+                        id: tabDropArea
+                        anchors.fill: parent
+                        keys: ["myDesktop/item"]
+                        onEntered: {
+                            if (tabBar.currentIndex === parent.TabBar.index)
+                            {
+                                drag.accepted = false;
+                            }
+                        }
+
+                        onDropped: {
+                            var globalIndex = (tabBar.currentIndex === 0) ? drop.getDataAsString("myDesktop/item") :
+                                                                            mapToGlobalIndex(drop.getDataAsString("myDesktop/item"))
+
+                            var matrix = root.localToGlobalIndexMatrix.slice()
+                            print(parent.TabBar.index-1)
+                            matrix[parent.TabBar.index-1].push(globalIndex)
+                            root.localToGlobalIndexMatrix = matrix
+                            if (tabBar.currentIndex !== 0 && drop.action === Qt.MoveAction)
+                            {
+                                deleteItemFromTab(tabBar.currentIndex - 1, drop.getDataAsString("myDesktop/item"))
+                            }
+
+                            refreshModel()
+                        }
                     }
                 }
             }
@@ -408,10 +432,7 @@ ApplicationWindow {
                 text:  qsTr("All") + translator.emptyString
                 width: implicitWidth + 20
                 font.pointSize: 10
-
-                onClicked: {
-                    //@TODO restore base model
-                }
+                Component.onCompleted: {print(TabBar.index)}
             }
         }
 
@@ -642,7 +663,43 @@ ApplicationWindow {
                     
                     anchors.left: bgRect.right
                     anchors.right: parent.right
-                    anchors.top:parent.top
+                    anchors.top:parent.top                    
+
+                    MouseArea{
+                        id: dragArea
+                        anchors.fill: parent
+                        drag.target: draggable
+
+                        onClicked: {
+
+                            if (!root.renaming || !desktopItemsModel.get(mapToGlobalIndex(desktopList.currentIndex)).exists)
+                            {
+                                root.renaming = false;
+                                desktopList.currentIndex = model.index
+                            }
+                        }
+
+                        onDoubleClicked: {
+                            if (!root.renaming)
+                            {
+                                openExternally(model.index)
+                            }
+                        }
+                    }
+
+                    Item
+                    {
+                        id: draggable
+                        anchors.fill: parent
+
+                        Drag.active: dragArea.drag.active && delText.visible
+                        Drag.hotSpot.x: 0
+                        Drag.hotSpot.y:0
+                        Drag.dragType: Drag.Automatic
+                        Drag.mimeData: {"myDesktop/item" : model.index}
+                        Drag.onDragFinished:{print("plop")}
+
+                    }
                     
                     states:
                         [
@@ -750,6 +807,8 @@ ApplicationWindow {
                         visible: true
                         leftPadding: 10
                         wrapMode: Text.Wrap
+
+                        onXChanged: {print(x)}
                         
                         color: moving && desktopList.currentIndex === index ? Material.accent : exists ? Material.foreground : Material.color(Material.Red)
                     }
@@ -842,22 +901,6 @@ ApplicationWindow {
                     height: Math.max (delTrashButton.height, Math.max( delTextEdit.height, delText.height)) + 10 // Creates binding loop but oh well...
                     color: desktopItemsDelegate.highlighted ? Material.accent : Qt.darker(Material.accent)
                     visible: desktopItemsDelegate.highlighted || desktopItemsDelegate.hovered                   
-                }
-                
-                onClicked: {
-                    
-                    if (!root.renaming || !desktopItemsModel.get(mapToGlobal(desktopList.currentIndex)).exists)
-                    {
-                        root.renaming = false;
-                        desktopList.currentIndex = model.index
-                    }
-                }
-                
-                onDoubleClicked: {
-                    if (!root.renaming)
-                    {
-                        openExternally(model.index)
-                    }
                 }
             }
         }
@@ -1092,7 +1135,7 @@ ApplicationWindow {
 
     // *************************************   FUNCTIONS ******************************************
 
-    function mapToGlobal(index)
+    function mapToGlobalIndex(index)
     {
         if (tabBar.currentIndex === 0)
         {
@@ -1127,7 +1170,7 @@ ApplicationWindow {
         }
         
 
-        var globalIndex = mapToGlobal(index)
+        var globalIndex = mapToGlobalIndex(index)
         var itemsCopy = root.desktopItems.slice()
         itemsCopy.splice(globalIndex,1)
         
@@ -1153,9 +1196,19 @@ ApplicationWindow {
                 matrixCopy[i].splice(found,1)
             }
         }
-        
+
+        localToGlobalIndexMatrix = matrixCopy
 
         //refresh
+        refreshModel()
+    }
+
+    // *************************************
+    function deleteItemFromTab(tabIndex, itemIndex)
+    {
+        var matrixCopy = localToGlobalIndexMatrix.slice()
+        matrixCopy[tabIndex].splice(itemIndex, 1)
+        localToGlobalIndexMatrix = matrixCopy
         refreshModel()
     }
 
@@ -1177,7 +1230,7 @@ ApplicationWindow {
     function updateName(index, newName)
     {
         var NamesCopy = root.desktopItemsNames.slice()
-        NamesCopy.splice(mapToGlobal(index), 1, newName)
+        NamesCopy.splice(mapToGlobalIndex(index), 1, newName)
         root.desktopItemsNames = NamesCopy
         root.desktopItemsNamesChanged()
         root.renaming = false
@@ -1251,7 +1304,7 @@ ApplicationWindow {
 
     function openExternally(index)
     {
-        var globalIndex = mapToGlobal(index)
+        var globalIndex = mapToGlobalIndex(index)
         if (globalIndex === undefined)
         {
             globalIndex = 0
@@ -1268,7 +1321,7 @@ ApplicationWindow {
         {
             root.renaming = false
         }
-        else if (desktopItemsModel.get(mapToGlobal(desktopList.currentIndex)).exists)
+        else if (desktopItemsModel.get(mapToGlobalIndex(desktopList.currentIndex)).exists)
         {
             openExternally(desktopList.currentIndex)
         }
