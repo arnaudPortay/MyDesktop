@@ -211,6 +211,8 @@ ApplicationWindow {
                 }
                 shortcut: "Shift+T"
             }
+
+            MenuSeparator{}
             
             Menu{
                 title: qsTr("&Language") + translator.emptyString
@@ -234,6 +236,8 @@ ApplicationWindow {
                     }
                 }
             }
+
+            MenuSeparator{}
 
             Menu {
                 title: qsTr("&Deletion behavior") + translator.emptyString
@@ -268,6 +272,8 @@ ApplicationWindow {
                     }
                 }
             }
+
+            MenuSeparator{}
             
             Action {
                 text: qsTr("&Launch at startup") + translator.emptyString
