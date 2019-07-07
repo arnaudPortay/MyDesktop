@@ -110,7 +110,7 @@ ApplicationWindow {
                                     deleteItemFromTab(tabBar.currentIndex-1, desktopList.currentIndex)
                                     break
                                 case 2:
-                                    deleteItemAt(mapToGlobalIndex(desktopList.currentIndex))
+                                    deleteItemAt(desktopList.currentIndex)
                                     break
                                 default:
                                     break
@@ -516,15 +516,15 @@ ApplicationWindow {
                         }
 
                         onDropped: {
-                            var globalIndex = (tabBar.currentIndex === 0) ? drop.getDataAsString("myDesktop/item") :
-                                                                            mapToGlobalIndex(drop.getDataAsString("myDesktop/item"))
+                            var globalIndex = (tabBar.currentIndex === 0) ? parseInt(drop.getDataAsString("myDesktop/item"), 10) :
+                                                                            mapToGlobalIndex(parseInt(drop.getDataAsString("myDesktop/item"), 10))
 
                             var matrix = root.localToGlobalIndexMatrix.slice()
                             matrix[parent.TabBar.index-1].push(globalIndex)
                             root.localToGlobalIndexMatrix = matrix
                             if (tabBar.currentIndex !== 0 && drop.action === Qt.MoveAction)
                             {
-                                deleteItemFromTab(tabBar.currentIndex - 1, drop.getDataAsString("myDesktop/item"))
+                                deleteItemFromTab(tabBar.currentIndex - 1, parseInt(drop.getDataAsString("myDesktop/item"), 10))
                             }
 
                             refreshModel()
@@ -1350,6 +1350,7 @@ ApplicationWindow {
 
         // update tab map
         var matrixCopy = localToGlobalIndexMatrix.slice()
+
         for (var i = 0; i < matrixCopy.length; i++)
         {
             var found = matrixCopy[i].findIndex(function(element){
