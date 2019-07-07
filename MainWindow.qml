@@ -104,6 +104,8 @@ ApplicationWindow {
                                 switch (deletionBehaviour)
                                 {
                                 case 0:
+                                    deleteBehaviorDialog.index = desktopList.currentIndex
+                                    deleteBehaviorDialog.tabIndex = tabBar.currentIndex-1
                                     deleteBehaviorDialog.open()
                                     break
                                 case 1:
@@ -1253,6 +1255,9 @@ ApplicationWindow {
         font.pointSize: 12
         height: implicitHeight + 50
         title: qsTr("Deleting item") + translator.emptyString
+        property bool permaDelete: false
+        property int index: 0
+        property int tabIndex: 1
 
         footer: DialogButtonBox {
             Button{
@@ -1265,6 +1270,9 @@ ApplicationWindow {
                 text: qsTr("Permanently delete") + translator.emptyString
                 flat: true
                 DialogButtonBox.buttonRole:  DialogButtonBox.AcceptRole
+                onClicked: {
+                    deleteBehaviorDialog.permaDelete = true
+                }
             }
 
             Button{
@@ -1300,13 +1308,22 @@ ApplicationWindow {
         }
 
         onAccepted:{
-            //@TODO
-            print("toto")
+            if (deleteBehaviorDialog.permaDelete)
+            {
+                deleteItemAt(index)
+            }
+            else
+            {
+                deleteItemFromTab(tabIndex, index)
+            }
+
+            root.deletionBehaviour = deleteDialogCB.checked ? permaDelete ? 2 : 1 : 0
+
+
             desktopList.forceActiveFocus()
         }
 
         onRejected: {
-            print("bla")
             desktopList.forceActiveFocus()
         }
     }
@@ -1370,17 +1387,32 @@ ApplicationWindow {
         // update tab map
         var matrixCopy = localToGlobalIndexMatrix.slice()
 
+        // iterate through tabs
         for (var i = 0; i < matrixCopy.length; i++)
         {
+            // Delete all instances of global index
             var found = matrixCopy[i].findIndex(function(element){
                 return element === globalIndex
             })
 
-            if (found !== -1)
+            while (found !== -1)
             {
                 matrixCopy[i].splice(found,1)
+                found = matrixCopy[i].findIndex(function(element){
+                                return element === globalIndex
+                            })
+            }
+
+            // Decrease indexes higher than globalIndex
+            for (var j = 0; j < matrixCopy[i]; j++ )
+            {
+                if (matrixCopy[i][j] > globalIndex)
+                {
+                    matrixCopy[i][j] -= 1
+                }
             }
         }
+
 
         localToGlobalIndexMatrix = matrixCopy
 
