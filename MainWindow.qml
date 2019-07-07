@@ -432,6 +432,7 @@ ApplicationWindow {
             onCurrentIndexChanged: {
                 refreshModel()
                 desktopList.forceActiveFocus()
+                desktopList.currentIndex = 0
             }
 
             Component {
@@ -500,7 +501,7 @@ ApplicationWindow {
                 horizontalAlignment: Qt.AlignHCenter
             }
 
-            onClicked: {                
+            onClicked: {
                 addTabBar()
             }
         }
@@ -580,7 +581,7 @@ ApplicationWindow {
             onCurrentIndexChanged: {
                 tabBar.focus = false
             }
-            
+
 
             Keys.onLeftPressed: {
                 if (event.modifiers & Qt.ControlModifier && tabBar.count > 0)
@@ -625,7 +626,7 @@ ApplicationWindow {
                     }
                 }
             }
-            
+
             Keys.onDownPressed: {
 
                 if (event.modifiers & Qt.ControlModifier && desktopList.count > 0)
@@ -673,44 +674,44 @@ ApplicationWindow {
                     event.accepted = true;
                 }
             }
-            
+
             ScrollBar.vertical: ScrollBar {
                 id: vScrollBar
                 policy: desktopList.contentHeight > desktopList.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-                
+
             }
-            
+
             delegate: ItemDelegate
             {
                 id:desktopItemsDelegate
-                
+
                 property bool matchesFilter: {
                     return String(name).toLowerCase().includes(filterTextField.text.toLowerCase());
                 }
-                
+
                 anchors.left: parent.left
                 anchors.right: parent.right
                 leftPadding: bgRect.width + 10
-                
+
                 height: matchesFilter ? childrenRect.height : 0
                 visible: matchesFilter
-                
+
                 ToolTip.visible: desktopItemsDelegate.hovered
                 ToolTip.delay: 2000
                 ToolTip.timeout: 5000
                 ToolTip.text: (""+path).replace("file:///","")
-                
+
                 highlighted: ListView.isCurrentItem
-                
+
                 focus: true
-                
+
                 contentItem: Item
                 {
                     id: delItem
-                    
+
                     anchors.left: bgRect.right
                     anchors.right: parent.right
-                    anchors.top:parent.top                    
+                    anchors.top:parent.top
 
                     MouseArea{
                         id: dragArea
@@ -747,19 +748,19 @@ ApplicationWindow {
                         Drag.onDragFinished:{print("plop")}
 
                     }
-                    
+
                     states:
                         [
                         State
                         {
                             name: "renaming"; when: root.renaming && desktopItemsDelegate.highlighted && exists
-                            
+
                             PropertyChanges
                             {
                                 target: delItem
                                 focus:true
                             }
-                            
+
                             PropertyChanges
                             {
                                 target: delTextEdit
@@ -767,7 +768,7 @@ ApplicationWindow {
                                 focus: true
                                 text: delText.text
                             }
-                            
+
                             // 2 steps process to have the text change first then we select it
                             PropertyChanges
                             {
@@ -778,7 +779,7 @@ ApplicationWindow {
                                     true
                                 }
                             }
-                            
+
                             PropertyChanges
                             {
                                 target: delText
@@ -786,81 +787,81 @@ ApplicationWindow {
                             }
                         }
                     ]
-                    
+
                     TextEdit {
                         id: delTextEdit
-                        
+
                         text: ""
-                        
+
                         focus: false
-                        
+
                         anchors.left: parent.left
                         anchors.right: moveUpButton.left
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
                         anchors.rightMargin: 5
-                        
+
                         verticalAlignment: Qt.AlignVCenter
-                        
+
                         font.bold: desktopItemsDelegate.highlighted
                         font.pointSize: 10
-                        
+
                         visible:false
-                        
+
                         leftPadding: 10
                         textFormat: TextEdit.PlainText
-                        
+
                         selectionColor: Material.accent
                         color: Material.foreground
-                        
+
                         selectByMouse: true
                         wrapMode: TextEdit.Wrap
 
                         property bool hackityHack: true
-                        
+
                         //Overload key pressed handlers to negate their effect
                         Keys.onUpPressed: {}
-                        
+
                         Keys.onDownPressed: {}
-                        
+
                         Keys.onReturnPressed: {
                             updateName(model.index, delTextEdit.text)
                         }
-                        
+
                         Keys.onEnterPressed: {
                             updateName(model.index, delTextEdit.text)
                         }
-                        
+
                         Keys.onEscapePressed: {root.renaming = false;}
-                        
+
                     }
-                    
+
                     Text {
                         id: delText
-                        
+
                         text: name
-                        
+
                         anchors.left: parent.left
                         anchors.right: moveUpButton.left
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
                         anchors.rightMargin: 5
-                        
+
                         verticalAlignment: Qt.AlignVCenter
-                        
+
                         font.bold: desktopItemsDelegate.highlighted
                         font.strikeout: !exists
                         font.pointSize: 10
-                        
+
                         visible: true
                         leftPadding: 10
                         wrapMode: Text.Wrap
 
                         onXChanged: {print(x)}
-                        
+
                         color: moving && desktopList.currentIndex === index ? Material.accent : exists ? Material.foreground : Material.color(Material.Red)
                     }
-                    
+
                     IconButton {
                         id: delTrashButton
                         anchors.right: parent.right
@@ -872,15 +873,15 @@ ApplicationWindow {
                         imageSource: "qrc:///img/trash.svg"
                         ToolTip.text: qsTr("Delete") + translator.emptyString
                         ToolTip.delay: 500
-                        
+
                         visible: desktopItemsDelegate.hovered
-                        
+
                         Material.background: Material.color(Material.Red)
                         onClicked: {
                             deleteItemAt(index)
                         }
                     }
-                    
+
                     IconButton {
                         id: delOpenLocationButton
                         anchors.right: delTrashButton.left
@@ -891,9 +892,9 @@ ApplicationWindow {
                         imageSource: hovered ? "qrc:///img/folderOpen.svg" : "qrc:///img/folder.svg"
                         ToolTip.text: qsTr("Open location") + translator.emptyString
                         ToolTip.delay: 500
-                        
+
                         visible: desktopItemsDelegate.hovered
-                        
+
                         onClicked: {
                             if (exists)
                             {
@@ -940,25 +941,25 @@ ApplicationWindow {
                         }
                     }
                 }
-                
-                
+
+
                 background: Rectangle{
                     id: bgRect
                     anchors.left: parent.left
                     width: 20
                     height: Math.max (delTrashButton.height, Math.max( delTextEdit.height, delText.height)) + 10 // Creates binding loop but oh well...
                     color: desktopItemsDelegate.highlighted ? Material.accent : Qt.darker(Material.accent)
-                    visible: desktopItemsDelegate.highlighted || desktopItemsDelegate.hovered                   
+                    visible: desktopItemsDelegate.highlighted || desktopItemsDelegate.hovered
                 }
             }
         }
-        
+
 
         // *************************************   EMPTY PAGE ******************************************
         Text
         {
             id: emptyListText
-            
+
             anchors.fill: parent
             anchors.margins: 10
             text: qsTr("Drag and drop files, folders, applications, shortcuts or internet links.") + translator.emptyString
@@ -971,21 +972,21 @@ ApplicationWindow {
             horizontalAlignment: Qt.AlignHCenter
             color: Material.color(Material.Grey)
         }
-        
+
 
         // *************************************   HELP PAGE ******************************************
         ScrollView{
             id: helpRect
             visible: false
             anchors.fill: parent
-            
+
             // disable horizontal scrolling
             contentWidth: -1
             // set proper content height
             contentHeight: helpText.contentHeight
-            
+
             ScrollBar.vertical.policy: helpRect.contentHeight > helpRect.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-            
+
             Text
             {
                 id: helpText
@@ -998,7 +999,7 @@ ApplicationWindow {
                 text: "<h1>" + qsTr("My Desktop Help Page") + "</h1><br>" +
                       qsTr("My Desktop allows you to gather applications, files, folders and hyperlinks and to open them with their default program.")+ "<br>" +
                       qsTr("You can also open the item location in the file explorer if said file is local.")+ "<br>"+
-                      qsTr("You can also paste a link to the item from the clipboard.") + "<br>" +                      
+                      qsTr("You can also paste a link to the item from the clipboard.") + "<br>" +
                       qsTr("Double-click on an item to open it with its default associated program.")+ "<br><br>" +
                       qsTr("If an item is displayed in red and is striked out, this means the item does not exist anymore.")+ "<br>" +
                       qsTr("There is a refresh button at the bottom of the window.")+ "<br><br>" +
@@ -1030,7 +1031,7 @@ ApplicationWindow {
             }
         }
     }
-    
+
     // *************************************   FOOTER ******************************************
     footer: Rectangle {
         id: myFooter
@@ -1038,7 +1039,7 @@ ApplicationWindow {
         anchors.right: parent.right
         height: 50
         color: Material.background
-        
+
         IconButton {
             id: refreshButton
             anchors.centerIn: parent
@@ -1053,7 +1054,7 @@ ApplicationWindow {
                 refreshModel()
             }
         }
-        
+
         Button {
             id: okButton
             anchors.centerIn: parent
@@ -1067,17 +1068,17 @@ ApplicationWindow {
             }
         }
     }
-    
+
     // *************************************   ABOUT PAGE ******************************************
     Dialog {
         id: aboutDialog
-        
+
         modal: true
         standardButtons: Dialog.Ok
         font.pointSize: 12
-        
+
         title: qsTr("About") + translator.emptyString
-        
+
         Text {
             text: "<style>a:link { color: " + Material.accent + "; }</style>" + qsTr("MyDesktop was developped by Arnaud Portay.<br>The source code is available on <a href=\"https://github.com/arnaudPortay/MyDesktop\">Github</a>.<br>Some code was taken here and there on the web, including from the <a href = \"https:\/\/github.com/VincentPonchaut/qmlplayground\">QmlPlayground</a> application by Vincent Ponchaut.<br><br>The application icon was made by <a href=\"https://www.flaticon.com/authors/pixel-perfect\">Pixel perfect</a> and taken from <a href=\"www.flaticon.com\">www.flaticon.com</a>.") + translator.emptyString
             color: Material.foreground
@@ -1087,7 +1088,7 @@ ApplicationWindow {
             wrapMode: Text.Wrap
             anchors.fill: parent
             onLinkActivated: Qt.openUrlExternally(link)
-            
+
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
@@ -1095,19 +1096,19 @@ ApplicationWindow {
             }
         }
     }
-    
+
 
     // *************************************   UNSUPPORTED PAGE ******************************************
     Dialog {
         id: notSupportedDialog
-        
+
         modal: true
         standardButtons: Dialog.Ok
         anchors.centerIn: parent
         font.pointSize: 12
-        
+
         title: qsTr("Woops...") + translator.emptyString
-        
+
         Text
         {
             text: qsTr("This feature is not supported on your platform yet.") + translator.emptyString
@@ -1175,11 +1176,11 @@ ApplicationWindow {
             desktopList.forceActiveFocus()
         }
     }
-    
+
     ListModel {
         id: desktopItemsModel
     }
-    
+
 
     // *************************************   FUNCTIONS ******************************************
 
@@ -1216,18 +1217,18 @@ ApplicationWindow {
         {
             root.renaming = false
         }
-        
+
 
         var globalIndex = mapToGlobalIndex(index)
         var itemsCopy = root.desktopItems.slice()
         itemsCopy.splice(globalIndex,1)
-        
+
         var namesCopy = root.desktopItemsNames.slice()
         namesCopy.splice(globalIndex,1)
-        
+
         root.desktopItems = itemsCopy
         root.desktopItemsChanged()
-        
+
         root.desktopItemsNames = namesCopy
         root.desktopItemsNamesChanged()
 
@@ -1282,7 +1283,7 @@ ApplicationWindow {
         root.desktopItemsNames = NamesCopy
         root.desktopItemsNamesChanged()
         root.renaming = false
-        
+
         refreshModel()
     }
 
@@ -1292,7 +1293,7 @@ ApplicationWindow {
     {
         var currentIndex = desktopList.currentIndex
         desktopItemsModel.clear()
-        
+
         var lPath = ""
         var lExists = true
         if (tabBar.currentIndex === 0 )
@@ -1324,7 +1325,7 @@ ApplicationWindow {
                 desktopItemsModel.append({"name": root.desktopItemsNames[globalIndex], "path": lPath, "exists": lExists})
             }
         }
-        
+
         desktopList.currentIndex = Math.min(currentIndex, desktopList.count - 1)
     }
 
@@ -1357,7 +1358,7 @@ ApplicationWindow {
         {
             globalIndex = 0
         }
-        
+
         Qt.openUrlExternally(root.desktopItems[globalIndex])
     }
 
@@ -1545,7 +1546,7 @@ ApplicationWindow {
         customTabs = tabs
         localToGlobalIndexMatrix = matrix
         refreshTabs()
-        tabBar.currentIndex = tabBar.count - 1        
+        tabBar.currentIndex = tabBar.count - 1
 
         desktopList.forceActiveFocus()
     }
