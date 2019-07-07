@@ -105,7 +105,7 @@ ApplicationWindow {
                     text: qsTr("&Move item up") + translator.emptyString
                     enabled: desktopList.currentIndex != 0 && desktopList.count != 0
                     onTriggered: {
-                        if ( desktopList.visible)
+                        if ( desktopList.visible && !root.renaming)
                         {
                             desktopList.currentIndex = moveUrl(true, desktopList.currentIndex)
                         }
@@ -116,7 +116,7 @@ ApplicationWindow {
                     text: qsTr("&Move item down") + translator.emptyString
                     enabled: desktopList.currentIndex != desktopList.count - 1
                     onTriggered: {
-                        if ( desktopList.visible)
+                        if ( desktopList.visible && !root.renaming)
                         {
                             desktopList.currentIndex = moveUrl(false, desktopList.currentIndex)
                         }
@@ -167,7 +167,7 @@ ApplicationWindow {
                     text: qsTr("&Move tab left") + translator.emptyString
                     enabled: tabBar.currentIndex > 1
                     onTriggered: {
-                        if ( desktopList.visible)
+                        if ( desktopList.visible && !root.renaming)
                         {
                             renaming = false
                             tabBar.currentIndex = moveTabBar(true, tabBar.currentIndex)
@@ -177,9 +177,9 @@ ApplicationWindow {
 
                 Action {
                     text: qsTr("&Move tab right") + translator.emptyString
-                    enabled: tabBar.currentIndex != tabBar.count - 1
+                    enabled: tabBar.currentIndex != tabBar.count - 1 && tabBar.currentIndex != 0
                     onTriggered: {
-                        if ( desktopList.visible)
+                        if ( desktopList.visible && !root.renaming)
                         {
                             renaming = false
                             tabBar.currentIndex = moveTabBar(false, tabBar.currentIndex)
@@ -584,14 +584,14 @@ ApplicationWindow {
 
 
             Keys.onLeftPressed: {
-                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0)
+                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0 && !root.renaming)
                 {
                     tabBar.currentIndex = moveTabBar(true, tabBar.currentIndex)
                 }
             }
 
             Keys.onRightPressed: {
-                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0)
+                if (event.modifiers & Qt.ControlModifier && tabBar.count > 0 && !root.renaming)
                 {
                     tabBar.currentIndex = moveTabBar(false, tabBar.currentIndex)
                 }
