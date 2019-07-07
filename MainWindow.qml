@@ -95,7 +95,7 @@ ApplicationWindow {
                         {
                             root.renaming = false
 
-                            if (desktopList.currentIndex === 0)
+                            if (tabBar.currentIndex === 0)
                             {
                                 deleteItemAt(desktopList.currentIndex)
                             }
@@ -110,7 +110,7 @@ ApplicationWindow {
                                     deleteItemFromTab(tabBar.currentIndex-1, desktopList.currentIndex)
                                     break
                                 case 2:
-                                    deleteItemAt(desktopList.currentIndex)
+                                    deleteItemAt(mapToGlobalIndex(desktopList.currentIndex))
                                     break
                                 default:
                                     break
@@ -520,7 +520,6 @@ ApplicationWindow {
                                                                             mapToGlobalIndex(drop.getDataAsString("myDesktop/item"))
 
                             var matrix = root.localToGlobalIndexMatrix.slice()
-                            print(parent.TabBar.index-1)
                             matrix[parent.TabBar.index-1].push(globalIndex)
                             root.localToGlobalIndexMatrix = matrix
                             if (tabBar.currentIndex !== 0 && drop.action === Qt.MoveAction)
@@ -538,7 +537,6 @@ ApplicationWindow {
                 text:  qsTr("All") + translator.emptyString
                 width: implicitWidth + 20
                 font.pointSize: 10
-                Component.onCompleted: {print(TabBar.index)}
             }
         }
 
@@ -803,8 +801,6 @@ ApplicationWindow {
                         Drag.hotSpot.y:0
                         Drag.dragType: Drag.Automatic
                         Drag.mimeData: {"myDesktop/item" : model.index}
-                        Drag.onDragFinished:{print("plop")}
-
                     }
 
                     states:
@@ -914,8 +910,6 @@ ApplicationWindow {
                         visible: true
                         leftPadding: 10
                         wrapMode: Text.Wrap
-
-                        onXChanged: {print(x)}
 
                         color: moving && desktopList.currentIndex === index ? Material.accent : exists ? Material.foreground : Material.color(Material.Red)
                     }
@@ -1250,6 +1244,10 @@ ApplicationWindow {
         Text
         {
             id: deleteBehaviorDialogText
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+
             text: qsTr("You are about to delete an item from a custom tab.") + "<br>" +
                   qsTr(" Do you wish to remove the item from the tab or to delete it permanently ?") + "<br>" +
                   qsTr("If you choose the former, the item will still be available in your other tabs.") + translator.emptyString
@@ -1257,10 +1255,13 @@ ApplicationWindow {
             font.family: "Segoe UI"
             font.pointSize: 10
             wrapMode: Text.Wrap
-            anchors.fill: parent
+            //anchors.fill: parent
 
             CheckBox{
+                anchors.top: parent.bottom
                 text: "<i>" + qsTr("Do not ask me again") + translator.emptyString + "</i>"
+                font.family: "Segoe UI"
+                font.pointSize: 8
             }
 
 //            Keys.onShortcutOverride: {
