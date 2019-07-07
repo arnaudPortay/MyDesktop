@@ -91,10 +91,31 @@ ApplicationWindow {
                     id: deleteItemAction
                     text: qsTr("&Delete item") + translator.emptyString
                     onTriggered: {
-                        if (desktopList.visible)
+                        if (desktopList.visible && desktopList.currentIndex >= 0 && desktopList.currentIndex < desktopList.count)
                         {
                             root.renaming = false
-                            deleteItemAt(desktopList.currentIndex)
+
+                            if (desktopList.currentIndex === 0)
+                            {
+                                deleteItemAt(desktopList.currentIndex)
+                            }
+                            else
+                            {
+                                switch (deletionBehaviour)
+                                {
+                                case 0:
+                                    deleteBehaviorDialog.open()
+                                    break
+                                case 1:
+                                    deleteItemFromTab(tabBar.currentIndex-1, desktopList.currentIndex)
+                                    break
+                                case 2:
+                                    deleteItemAt(desktopList.currentIndex)
+                                    break
+                                default:
+                                    break
+                                }
+                            }
                         }
                     }
                 }
@@ -238,6 +259,40 @@ ApplicationWindow {
                     }
                 }
             }
+
+            Menu {
+                title: qsTr("&Deletion behavior") + translator.emptyString
+
+                Action{
+                    text: qsTr("&Always ask") + translator.emptyString
+                    checkable: true
+                    checked: root.deletionBehaviour === 0
+                    enabled: root.deletionBehaviour !== 0
+                    onTriggered: {
+                        root.deletionBehaviour = 0
+                    }
+                }
+
+                Action{
+                    text: qsTr("&Delete from tab") + translator.emptyString
+                    checkable: true
+                    checked: root.deletionBehaviour === 1
+                    enabled: root.deletionBehaviour !== 1
+                    onTriggered: {
+                        root.deletionBehaviour = 1
+                    }
+                }
+
+                Action{
+                    text: qsTr("&Permanently delete") + translator.emptyString
+                    checkable: true
+                    checked: root.deletionBehaviour === 2
+                    enabled: root.deletionBehaviour !== 2
+                    onTriggered: {
+                        root.deletionBehaviour = 2
+                    }
+                }
+            }
             
             Action {
                 text: qsTr("&Launch at startup") + translator.emptyString
@@ -317,6 +372,7 @@ ApplicationWindow {
     // Array of array with the first array being the tabs and the inner array being as big as their number of items
     // with the value being the global index in the model (ie in desktopItems and desktopItemsNames ) for customTabs
     property var localToGlobalIndexMatrix: []
+    property int deletionBehaviour: 0
     
     // *************************************   SETTINGS ******************************************
     Settings {
@@ -330,6 +386,8 @@ ApplicationWindow {
         property alias currentFilter: filterTextField.text
         //current Tab
         property int currentTab
+        //Deletion behaviour
+        property alias deletionBehaviour: root.deletionBehaviour
         
         // Window position and size
         property alias windowX: root.x
@@ -1177,6 +1235,63 @@ ApplicationWindow {
         }
     }
 
+    // *************************************   DELETION BEHAVIOUR DIALOG ******************************************
+
+    Dialog {
+        id: deleteBehaviorDialog
+
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        anchors.centerIn: parent
+        font.pointSize: 12
+
+        title: qsTr("Deleting item") + translator.emptyString
+
+        Text
+        {
+            id: deleteBehaviorDialogText
+            text: qsTr("You are about to delete an item from a custom tab.") + "<br>" +
+                  qsTr(" Do you wish to remove the item from the tab or to delete it permanently ?") + "<br>" +
+                  qsTr("If you choose the former, the item will still be available in your other tabs.") + translator.emptyString
+            color: Material.foreground
+            font.family: "Segoe UI"
+            font.pointSize: 10
+            wrapMode: Text.Wrap
+            anchors.fill: parent
+
+            CheckBox{
+                text: "<i>" + qsTr("Do not ask me again") + translator.emptyString + "</i>"
+            }
+
+//            Keys.onShortcutOverride: {
+//                event.accepted = (event.key === Qt.Key_Return)
+//            }
+
+//            Keys.onEnterPressed: {
+//                renameTabDialog.accept()
+//            }
+
+//            Keys.onReturnPressed: {
+//                renameTabDialog.accept()
+//            }
+
+//            Keys.onEscapePressed: {
+//                renameTabDialog.reject()
+//            }
+        }
+
+
+        onAccepted:{
+            //@TODO
+            desktopList.forceActiveFocus()
+        }
+
+        onRejected: {
+            desktopList.forceActiveFocus()
+        }
+    }
+
+    // *************************************   MODEL ******************************************
     ListModel {
         id: desktopItemsModel
     }
