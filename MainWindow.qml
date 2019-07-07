@@ -1238,15 +1238,12 @@ ApplicationWindow {
         standardButtons: Dialog.Ok | Dialog.Cancel
         anchors.centerIn: parent
         font.pointSize: 12
-
+        height: implicitHeight + 50
         title: qsTr("Deleting item") + translator.emptyString
 
         Text
         {
             id: deleteBehaviorDialogText
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
 
             text: qsTr("You are about to delete an item from a custom tab.") + "<br>" +
                   qsTr(" Do you wish to remove the item from the tab or to delete it permanently ?") + "<br>" +
@@ -1255,13 +1252,13 @@ ApplicationWindow {
             font.family: "Segoe UI"
             font.pointSize: 10
             wrapMode: Text.Wrap
-            //anchors.fill: parent
 
             CheckBox{
-                anchors.top: parent.bottom
+                id: deleteDialogCB
+                y: deleteBehaviorDialogText.implicitHeight + 15
                 text: "<i>" + qsTr("Do not ask me again") + translator.emptyString + "</i>"
                 font.family: "Segoe UI"
-                font.pointSize: 8
+                font.pointSize: 10
             }
 
 //            Keys.onShortcutOverride: {
@@ -1280,7 +1277,6 @@ ApplicationWindow {
 //                renameTabDialog.reject()
 //            }
         }
-
 
         onAccepted:{
             //@TODO
