@@ -406,7 +406,7 @@ ApplicationWindow {
             onActivated: {
                 if (desktopList.visible && Clipboard.getUrls().length > 0 && !dialogVisible)
                 {
-                    addUrls(Clipboard.getUrls())
+                    addUrls(Clipboard.getUrls(), tabBar.currentIndex)
                 }
             }
         }
@@ -460,7 +460,7 @@ ApplicationWindow {
             onDropped: {
                 if (desktopList.visible)
                 {
-                    addUrls(drop.urls)
+                    addUrls(drop.urls, tabBar.currentIndex)
                 }
             }
         }
@@ -492,27 +492,41 @@ ApplicationWindow {
                     DropArea{
                         id: tabDropArea
                         anchors.fill: parent
-                        keys: ["myDesktop/item"]
+
                         onEntered: {
-                            if (tabBar.currentIndex === parent.TabBar.index)
+                            if (tabBar.currentIndex === parent.TabBar.index && drag.formats.find(function(element){return element === "myDesktop/item"}) !== undefined )
+                            {
+                                drag.accepted = false;
+                            }
+                            else if (!drag.hasUrls && drag.formats.find(function(element){return element === "myDesktop/item"}) !== undefined)
                             {
                                 drag.accepted = false;
                             }
                         }
 
                         onDropped: {
-                            var globalIndex = (tabBar.currentIndex === 0) ? parseInt(drop.getDataAsString("myDesktop/item"), 10) :
-                                                                            mapToGlobalIndex(parseInt(drop.getDataAsString("myDesktop/item"), 10))
-
-                            var matrix = root.localToGlobalIndexMatrix.slice()
-                            matrix[parent.TabBar.index-1].push(globalIndex)
-                            root.localToGlobalIndexMatrix = matrix
-                            if (tabBar.currentIndex !== 0 && drop.action === Qt.MoveAction)
+                            if (drop.hasUrls)
                             {
-                                deleteItemFromTab(tabBar.currentIndex - 1, parseInt(drop.getDataAsString("myDesktop/item"), 10))
+                                if (desktopList.visible)
+                                {
+                                    addUrls(drop.urls, parent.TabBar.index)
+                                }
                             }
+                            else
+                            {
+                                var globalIndex = (tabBar.currentIndex === 0) ? parseInt(drop.getDataAsString("myDesktop/item"), 10) :
+                                                                                mapToGlobalIndex(parseInt(drop.getDataAsString("myDesktop/item"), 10))
 
-                            refreshModel()
+                                var matrix = root.localToGlobalIndexMatrix.slice()
+                                matrix[parent.TabBar.index-1].push(globalIndex)
+                                root.localToGlobalIndexMatrix = matrix
+                                if (tabBar.currentIndex !== 0 && drop.action === Qt.MoveAction)
+                                {
+                                    deleteItemFromTab(tabBar.currentIndex - 1, parseInt(drop.getDataAsString("myDesktop/item"), 10))
+                                }
+
+                                refreshModel()
+                            }
                         }
                     }
                 }
@@ -522,6 +536,24 @@ ApplicationWindow {
                 text:  qsTr("All") + translator.emptyString
                 width: implicitWidth + 20
                 font.pointSize: 10
+
+                DropArea{
+                    anchors.fill: parent
+
+                    onEntered: {
+                        if (!drag.hasUrls)
+                        {
+                            drag.accepted = false
+                        }
+                    }
+
+                    onDropped: {
+                        if (desktopList.visible)
+                        {
+                            addUrls(drop.urls, 0)
+                        }
+                    }
+                }
             }
         }
 
@@ -1657,7 +1689,7 @@ ApplicationWindow {
 
     // *************************************
 
-    function addUrls(urls)
+    function addUrls(urls, tabIndex)
     {
         var ItemsCopy = root.desktopItems.slice()
         var NamesCopy = root.desktopItemsNames.slice()
@@ -1668,7 +1700,7 @@ ApplicationWindow {
         var currentExtension = ""
         var lNewExtension = ""
         var dirs = []
-        var addingToCustomTab = tabBar.currentIndex !== 0
+        var addingToCustomTab = tabIndex !== 0
 
         for (var i=0; i < urls.length; i++){
 
@@ -1707,7 +1739,7 @@ ApplicationWindow {
 
             if (addingToCustomTab)
             {
-                matrix[tabBar.currentIndex - 1].push(ItemsCopy.length-1)
+                matrix[tabIndex - 1].push(ItemsCopy.length-1)
             }
 
         }
