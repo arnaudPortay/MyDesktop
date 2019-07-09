@@ -1399,7 +1399,7 @@ ApplicationWindow {
             id: deleteBehaviorDialogText
 
             text: qsTr("You are about to delete an item from a custom tab.") + "<br>" +
-                  qsTr(" Do you wish to remove the item from the tab or to delete it permanently ?") + "<br>" +
+                  qsTr("Do you wish to remove the item from the tab or to delete it permanently ?") + "<br>" +
                   qsTr("If you choose the former, the item will still be available in your other tabs.") + translator.emptyString
             color: Material.foreground
             font.family: "Segoe UI"
