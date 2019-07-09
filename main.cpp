@@ -10,11 +10,11 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setOrganizationName("MyDesktop");
-    QCoreApplication::setOrganizationDomain("MyDesktop.com");
-    QCoreApplication::setApplicationName("MyDesktop");
-    QCoreApplication::setApplicationVersion("1.0.0");
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setOrganizationName("MyDesktop");
+    QApplication::setOrganizationDomain("MyDesktop.com");
+    QApplication::setApplicationName("MyDesktop");
+    QApplication::setApplicationVersion("1.1.0");
 
     QApplication app(argc, argv);
 
