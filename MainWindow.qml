@@ -1260,7 +1260,8 @@ ApplicationWindow {
         title: qsTr("About") + translator.emptyString
 
         Text {
-            text: "<style>a:link { color: " + Material.accent + "; }</style>" + qsTr("MyDesktop was developped by Arnaud Portay.<br>The source code is available on <a href=\"https://github.com/arnaudPortay/MyDesktop\">Github</a>.<br>Some code was taken here and there on the web, including from the <a href = \"https:\/\/github.com/VincentPonchaut/qmlplayground\">QmlPlayground</a> application by Vincent Ponchaut.<br><br>The application icon was made by <a href=\"https://www.flaticon.com/authors/pixel-perfect\">Pixel perfect</a> and taken from <a href=\"www.flaticon.com\">www.flaticon.com</a>.") + translator.emptyString
+            text: "<style>a:link { color: " + Material.accent + "; }</style>" + qsTr("MyDesktop was developped by Arnaud Portay.<br>The source code is available on <a href=\"https://github.com/arnaudPortay/MyDesktop\">Github</a>.<br>Some code was taken here and there on the web, including from the <a href = \"https:\/\/github.com/VincentPonchaut/qmlplayground\">QmlPlayground</a> application by Vincent Ponchaut.<br><br>The application icon was made by <a href=\"https://www.flaticon.com/authors/pixel-perfect\">Pixel perfect</a> and taken from <a href=\"www.flaticon.com\">www.flaticon.com</a>.")
+                  + "<br><br>" + qsTr("Current version is ") + Qt.application.version + translator.emptyString
             color: Material.foreground
             font.family: "Segoe UI"
             font.pointSize: 10

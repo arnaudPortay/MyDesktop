@@ -256,42 +256,42 @@
         <translation>Ctrl + T : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1369"/>
+        <location filename="MainWindow.qml" line="1264"/>
+        <source>Current version is </source>
+        <translation>La version actuelle est la version </translation>
+    </message>
+    <message>
+        <location filename="MainWindow.qml" line="1370"/>
         <source>Deleting item</source>
         <translation>Suppression d&apos;un élément</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1376"/>
+        <location filename="MainWindow.qml" line="1377"/>
         <source>Delete from tab</source>
         <translation>Suppr. de l&apos;onglet</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1382"/>
+        <location filename="MainWindow.qml" line="1383"/>
         <source>Permanently delete</source>
         <translation>Suppr. définitivement</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1391"/>
+        <location filename="MainWindow.qml" line="1392"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1401"/>
+        <location filename="MainWindow.qml" line="1402"/>
         <source>You are about to delete an item from a custom tab.</source>
         <translation>Vous êtes sur le point de supprimer un élément d&apos;un onglet personnalisé.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1402"/>
-        <source> Do you wish to remove the item from the tab or to delete it permanently ?</source>
-        <translation>Souhaitez-vous supprimer l&apos;élément de l&apos;onglet uniquement où le supprimer définitivement ?</translation>
-    </message>
-    <message>
-        <location filename="MainWindow.qml" line="1403"/>
+        <location filename="MainWindow.qml" line="1404"/>
         <source>If you choose the former, the item will still be available in your other tabs.</source>
         <translation>Si vous choisissez de le supprimer de l&apos;onglet, l&apos;élément sera toujours disponible dans vos autres onglets.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1412"/>
+        <location filename="MainWindow.qml" line="1413"/>
         <source>Do not ask me again</source>
         <translation>Ne plus me demander</translation>
     </message>
@@ -377,7 +377,7 @@
     </message>
     <message>
         <location filename="MainWindow.qml" line="495"/>
-        <location filename="MainWindow.qml" line="1864"/>
+        <location filename="MainWindow.qml" line="1865"/>
         <source>New Tab</source>
         <translation>Nouvel Onglet</translation>
     </message>
@@ -442,7 +442,7 @@
         <translation>Supprimer l&apos;onglet personnalisé courant.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1312"/>
+        <location filename="MainWindow.qml" line="1313"/>
         <source>Renaming Tab</source>
         <translation>Renommer l&apos;Onglet</translation>
     </message>
@@ -497,12 +497,12 @@
         <translation>MonBureau est développé par Arnaud Portay.&lt;br&gt;Le code source est disponible sur &lt;a href=&quot;https://github.com/arnaudPortay/MyDesktop&quot;&gt;Github&lt;/a&gt;.&lt;br&gt;Des bouts de code ont été pris ici et là sur le net, notamment dans l&apos;application &lt;a href = &quot;https://github.com/VincentPonchaut/qmlplayground&quot;&gt;QmlPlayground&lt;/a&gt; de Vincent Ponchaut.&lt;br&gt;&lt;br&gt;L&apos;icône de l&apos;application a été réalisée par &lt;a href=&quot;https://www.flaticon.com/authors/pixel-perfect&quot;&gt;Pixel perfect&lt;/a&gt; et récupérée sur &lt;a href=&quot;www.flaticon.com&quot;&gt;www.flaticon.com&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1290"/>
+        <location filename="MainWindow.qml" line="1291"/>
         <source>Woops...</source>
         <translation>Ouuups...</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1294"/>
+        <location filename="MainWindow.qml" line="1295"/>
         <source>This feature is not supported on your platform yet.</source>
         <translation>Cette fonctionnalité n&apos;est pas supportée sur vôtre plateforme pour le moment.</translation>
     </message>
