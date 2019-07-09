@@ -358,7 +358,14 @@ ApplicationWindow {
     property var localToGlobalIndexMatrix: []
     property int deletionBehaviour: 0
     property bool dialogVisible: deleteBehaviorDialog.visible || notSupportedDialog.visible || aboutDialog.visible
-    
+
+    // Hack for making ColorAnimations work with Material
+    property color accent: Material.accent
+    property color foreground: Material.foreground
+
+    property bool dragStarted: false
+    property bool containsDrag: false
+
     // *************************************   SETTINGS ******************************************
     Settings {
         id: settings
@@ -445,7 +452,8 @@ ApplicationWindow {
                 addTabAction.trigger()
             }
         }
-        
+
+
         DropArea{
             id: globalDropArea
             anchors.fill: desktopList
@@ -463,6 +471,8 @@ ApplicationWindow {
                     addUrls(drop.urls, tabBar.currentIndex)
                 }
             }
+
+            onContainsDragChanged: {root.containsDrag = containsDrag}
         }
         
 
@@ -481,24 +491,68 @@ ApplicationWindow {
             Component {
                 id: tabButton
                 TabButton {
+                    id: control
                     text: qsTr("New Tab") + translator.emptyString
                     width: implicitWidth + 20
                     font.pointSize: 10
+
+                    contentItem: Text {
+                        id: controlText
+                            text: control.text
+                            font: control.font
+                            opacity: enabled ? 1.0 : 0.3
+                            color: control.TabBar.index === tabBar.currentIndex ? Material.accent : Material.foreground
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+
+                            SequentialAnimation on color {
+                                id: tabButtonColorAnim
+                                loops: Animation.Infinite
+                                running: (root.dragStarted || root.containsDrag) && control.TabBar.index !== tabBar.currentIndex
+
+                                ColorAnimation
+                                {
+                                    from: root.foreground
+                                    to: root.accent
+                                    duration: 200
+                                }
+                                ColorAnimation
+                                {
+                                    from: root.accent
+                                    to: root.foreground
+                                    duration: 200
+                                }
+
+                                onRunningChanged: {
+                                    if (!running)
+                                    {
+                                        // remake binding
+                                        controlText.color = Qt.binding(function(){ return control.TabBar.index === tabBar.currentIndex ? root.accent : root.foreground })
+                                    }
+                                }
+                            }
+                        }
+
 
                     onDoubleClicked: {
                         renameTabDialog.open()
                     }
 
+
+
                     DropArea{
                         id: tabDropArea
                         anchors.fill: parent
+
+                        onContainsDragChanged: {root.containsDrag = containsDrag }
 
                         onEntered: {
                             if (tabBar.currentIndex === parent.TabBar.index && drag.formats.find(function(element){return element === "myDesktop/item"}) !== undefined )
                             {
                                 drag.accepted = false;
                             }
-                            else if (!drag.hasUrls && drag.formats.find(function(element){return element === "myDesktop/item"}) !== undefined)
+                            else if (!drag.hasUrls && drag.formats.find(function(element){return element === "myDesktop/item"}) === undefined)
                             {
                                 drag.accepted = false;
                             }
@@ -533,9 +587,48 @@ ApplicationWindow {
             }
 
             TabButton{
+                id: allTabButton
                 text:  qsTr("All") + translator.emptyString
                 width: implicitWidth + 20
                 font.pointSize: 10
+
+                contentItem: Text {
+                    id: allTabButtonText
+                        text: allTabButton.text
+                        font: allTabButton.font
+                        opacity: enabled ? 1.0 : 0.3
+                        color: allTabButton.TabBar.index === tabBar.currentIndex ? Material.accent : Material.foreground
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+
+                        SequentialAnimation on color {
+                            id: allTabButtonColorAnim
+                            loops: Animation.Infinite
+                            running: root.containsDrag && allTabButton.TabBar.index !== tabBar.currentIndex
+
+                            ColorAnimation
+                            {
+                                from: root.foreground
+                                to: root.accent
+                                duration: 200
+                            }
+                            ColorAnimation
+                            {
+                                from: root.accent
+                                to: root.foreground
+                                duration: 200
+                            }
+
+                            onRunningChanged: {
+                                if (!running)
+                                {
+                                    // remake binding
+                                    allTabButtonText.color = Qt.binding(function(){ return control.TabBar.index === tabBar.currentIndex ? root.accent : root.foreground })
+                                }
+                            }
+                        }
+                    }
 
                 DropArea{
                     anchors.fill: parent
@@ -553,6 +646,8 @@ ApplicationWindow {
                             addUrls(drop.urls, 0)
                         }
                     }
+
+                    onContainsDragChanged: {root.containsDrag = containsDrag}
                 }
             }
         }
@@ -820,6 +915,12 @@ ApplicationWindow {
                         Drag.hotSpot.y:0
                         Drag.dragType: Drag.Automatic
                         Drag.mimeData: {"myDesktop/item" : model.index}
+                        Drag.onDragStarted: {
+                            root.dragStarted = true
+                        }
+                        Drag.onDragFinished: {
+                            root.dragStarted = false
+                        }
                     }
 
                     states:
