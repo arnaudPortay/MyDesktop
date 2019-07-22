@@ -495,6 +495,7 @@ ApplicationWindow {
                     text: qsTr("New Tab") + translator.emptyString
                     width: implicitWidth + 20
                     font.pointSize: 10
+                    font.capitalization: Font.MixedCase
 
                     contentItem: Text {
                         id: controlText
@@ -591,6 +592,7 @@ ApplicationWindow {
                 text:  qsTr("All") + translator.emptyString
                 width: implicitWidth + 20
                 font.pointSize: 10
+                font.capitalization: Font.MixedCase
 
                 contentItem: Text {
                     id: allTabButtonText
