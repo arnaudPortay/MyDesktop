@@ -7,6 +7,7 @@
 #include "filewrapper.h"
 #include "desktoptranslator.h"
 #include "clipboardwrapper.h"
+#include "globalshortcut.h"
 
 int main(int argc, char *argv[])
 {
@@ -39,6 +40,8 @@ int main(int argc, char *argv[])
 
         return lSingleton;
     });
+
+    qmlRegisterType<GlobalShortcut>("Apy.globalShortcuts", 1, 0, "GlobalShortcut");
 
     QQmlApplicationEngine engine;
     DesktopTranslator lTranslator;

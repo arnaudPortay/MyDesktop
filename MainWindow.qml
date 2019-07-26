@@ -6,6 +6,7 @@ import QtQuick.Controls.Material 2.2
 import Apy.file.utilies 1.0
 import Qt.labs.platform 1.1 as Labs
 import Apy.clipboard 1.0
+import Apy.globalShortcuts 1.0
 
 ApplicationWindow {
     id: root
@@ -212,6 +213,17 @@ ApplicationWindow {
                 shortcut: "Shift+T"
             }
 
+            Action{
+                text: qsTr("&Global Shortcut") + translator.emptyString
+                onTriggered: {
+                    if (!dialogVisible)
+                    {
+                        changeGlobalShortcutDialog.resetting = false
+                        changeGlobalShortcutDialog.open()
+                    }
+                }
+            }
+
             MenuSeparator{}
             
             Menu{
@@ -357,7 +369,7 @@ ApplicationWindow {
     // with the value being the global index in the model (ie in desktopItems and desktopItemsNames ) for customTabs
     property var localToGlobalIndexMatrix: []
     property int deletionBehaviour: 0
-    property bool dialogVisible: deleteBehaviorDialog.visible || notSupportedDialog.visible || aboutDialog.visible
+    property bool dialogVisible: deleteBehaviorDialog.visible || notSupportedDialog.visible || aboutDialog.visible || changeGlobalShortcutDialog.visible
 
     // Hack for making ColorAnimations work with Material
     property color accent: Material.accent
@@ -365,6 +377,8 @@ ApplicationWindow {
 
     property bool dragStarted: false
     property bool containsDrag: false
+
+    property string searchGShortcutKS: "Shift+1"
 
     // *************************************   SETTINGS ******************************************
     Settings {
@@ -399,6 +413,27 @@ ApplicationWindow {
         // Tabs to global correspondance matrix for customTabs ONLY
         property alias localToGlobalIndexMatrix: root.localToGlobalIndexMatrix
 
+        // Global Shortcut
+        property alias searchGShortcutKS: root.searchGShortcutKS
+
+    }
+
+    // *************************************   GLOBAL SHORTCUT ******************************************
+    GlobalShortcut{
+        id: globalShortcut
+        keySequence: searchGShortcutKS
+        onActivated: {
+            show()
+            raise()
+            requestActivate()
+            tabBar.setCurrentIndex(0)
+            filterTextField.focus = true
+        }
+
+        onKeySequenceChangeFailed: {
+            changeGlobalShortcutDialog.resetting = true
+            changeGlobalShortcutDialog.open()
+        }
     }
     
     // *************************************   BASE RECTANGLE ******************************************
@@ -1358,6 +1393,78 @@ ApplicationWindow {
         onRejected: {
             desktopList.forceActiveFocus()
         }
+    }
+
+    // *************************************   CHANGE GSHORTCUT PAGE ******************************************
+    Dialog {
+        id: changeGlobalShortcutDialog
+
+        property bool resetting: false
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        anchors.centerIn: parent
+        font.pointSize: 12
+        height: resetting ? implicitHeight + implicitHeaderHeight : implicitHeight
+
+        title: qsTr("Modifying Global Search Shortcut") + translator.emptyString
+
+        Text
+        {
+            id: changeFailedText
+            text: changeGlobalShortcutDialog.resetting ? qsTr("Search global shortcut could not be set to the desired value, try another") + translator.emptyString : translator.emptyString
+            color: Material.foreground
+            font.family: "Segoe UI"
+            font.pointSize: 10
+            wrapMode: Text.Wrap
+
+            TextField
+            {
+                id: modifySearchGSTextField
+                text: root.searchGShortcutKS
+                color: Material.foreground
+                selectionColor: Material.accent
+                font.family: "Segoe UI"
+                font.pointSize: 10
+                wrapMode: Text.Wrap
+                y: changeGlobalShortcutDialog.resetting ? changeFailedText.height + 15 : changeFailedText.y
+                x: (changeGlobalShortcutDialog.width - width)/2 - changeGlobalShortcutDialog.leftPadding
+                selectByMouse: true
+
+                Keys.onShortcutOverride: {
+                    event.accepted = (event.key === Qt.Key_Return)
+                }
+
+                Keys.onEnterPressed: {
+                    changeGlobalShortcutDialog.accept()
+                }
+
+                Keys.onReturnPressed: {
+                    changeGlobalShortcutDialog.accept()
+                }
+
+                Keys.onEscapePressed: {
+                    changeGlobalShortcutDialog.reject()
+                }
+            }
+
+        }
+
+        onOpened:{
+            changeGlobalShortcutDialog.focus = true
+            modifySearchGSTextField.focus = true
+            modifySearchGSTextField.selectAll()
+            modifySearchGSTextField.forceActiveFocus()
+        }
+
+        onAccepted:{
+            root.searchGShortcutKS = modifySearchGSTextField.text
+            desktopList.forceActiveFocus()
+        }
+
+        onRejected: {
+            desktopList.forceActiveFocus()
+        }
+
     }
 
     // *************************************   DELETION BEHAVIOUR DIALOG ******************************************
