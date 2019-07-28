@@ -55,6 +55,7 @@ ApplicationWindow {
                             Qt.openUrlExternally(File.getDir(root.desktopItems[desktopList.currentIndex]))
                         }
                     }
+                    root.moving = false
                 }
                 shortcut: "Ctrl+O"
             }
@@ -324,6 +325,7 @@ ApplicationWindow {
                         addTabButton.visible = false
                         helpRect.visible = true
                     }
+                    root.moving = false
                 }
             }
             
@@ -433,6 +435,9 @@ ApplicationWindow {
         onKeySequenceChangeFailed: {
             changeGlobalShortcutDialog.resetting = true
             changeGlobalShortcutDialog.open()
+
+            // On the off chance the custom global shortcut contians Ctrl and window was already focused, we set the root.moving to false.
+            root.moving = false
         }
     }
     
@@ -450,6 +455,7 @@ ApplicationWindow {
                 {
                     addUrls(Clipboard.getUrls(), tabBar.currentIndex)
                 }
+                root.moving = false
             }
         }
 
@@ -478,6 +484,7 @@ ApplicationWindow {
             sequences: ["Ctrl+W"]
             onActivated: {
                 deleteTabAction.trigger()
+                root.moving = false
             }
         }
 
@@ -485,6 +492,7 @@ ApplicationWindow {
             sequences: ["Ctrl+T"]
             onActivated: {
                 addTabAction.trigger()
+                root.moving = false
             }
         }
 
@@ -748,6 +756,7 @@ ApplicationWindow {
                 sequence: "Ctrl+F"
                 onActivated: {
                     filterTextField.focus = true
+                    root.moving = false
                 }
             }
 
@@ -882,7 +891,7 @@ ApplicationWindow {
                     root.keepLink = false;
                     event.accepted = true;
                 }
-                else if (event.key === Qt.Key_Control && !renaming)
+                else if (event.key === Qt.Key_Control && !renaming )
                 {
                     root.moving = false;
                     event.accepted = true;
