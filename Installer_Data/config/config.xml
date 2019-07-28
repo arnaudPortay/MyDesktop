@@ -6,5 +6,6 @@
     <Publisher>Arnaud Portay</Publisher>
     <StartMenuDir>My Desktop</StartMenuDir>
     <TargetDir>@ApplicationsDir@/MyDesktop</TargetDir>
+	<RunProgram>@TargetDir@/bin/MyDesktop</RunProgram>
 		<SupportsModify>false</SupportsModify>
 </Installer>
