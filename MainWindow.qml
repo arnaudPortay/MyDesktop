@@ -504,10 +504,13 @@ ApplicationWindow {
                 if (desktopList.visible)
                 {
                     addUrls(drop.urls, tabBar.currentIndex)
+                    root.dragStarted = false
                 }
             }
 
-            onContainsDragChanged: {root.containsDrag = containsDrag}
+            onContainsDragChanged: {
+                root.containsDrag = containsDrag
+            }
         }
         
 
@@ -581,7 +584,9 @@ ApplicationWindow {
                         id: tabDropArea
                         anchors.fill: parent
 
-                        onContainsDragChanged: {root.containsDrag = containsDrag }
+                        onContainsDragChanged: {
+                            root.containsDrag = containsDrag
+                        }
 
                         onEntered: {
                             if (tabBar.currentIndex === parent.TabBar.index && drag.formats.find(function(element){return element === "myDesktop/item"}) !== undefined )
@@ -617,6 +622,7 @@ ApplicationWindow {
 
                                 refreshModel()
                             }
+                            root.dragStarted = false
                         }
                     }
                 }
@@ -681,6 +687,7 @@ ApplicationWindow {
                         if (desktopList.visible)
                         {
                             addUrls(drop.urls, 0)
+                            root.dragStarted = false
                         }
                     }
 
@@ -955,7 +962,7 @@ ApplicationWindow {
                         Drag.onDragStarted: {
                             root.dragStarted = true
                         }
-                        Drag.onDragFinished: {
+                        Drag.onDragFinished: {                            
                             root.dragStarted = false
                         }
                     }
