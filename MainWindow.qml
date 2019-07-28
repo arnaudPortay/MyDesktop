@@ -210,6 +210,7 @@ ApplicationWindow {
                 checked: root.darkTheme
                 onTriggered: {
                     root.darkTheme = !root.darkTheme
+                    root.keepLink = false
                 }
                 shortcut: "Shift+T"
             }
@@ -438,6 +439,8 @@ ApplicationWindow {
 
             // On the off chance the custom global shortcut contians Ctrl and window was already focused, we set the root.moving to false.
             root.moving = false
+            // On the off chance the custom global shortcut contians Shift and window was already focused, we set the root.keepLink to false.
+            root.keepLink = false
         }
     }
     
@@ -456,6 +459,7 @@ ApplicationWindow {
                     addUrls(Clipboard.getUrls(), tabBar.currentIndex)
                 }
                 root.moving = false
+                root.keepLink = false
             }
         }
 
@@ -477,6 +481,7 @@ ApplicationWindow {
             sequences: ["Shift+F2"]
             onActivated: {
                 renameTabAction.trigger()
+                root.keepLink = false
             }
         }
 
@@ -826,6 +831,8 @@ ApplicationWindow {
             Keys.onBacktabPressed: {
                 if (!dialogVisible)
                     tabBar.decrementCurrentIndex()
+
+                root.keepLink = false
             }
 
             Keys.onUpPressed: {
