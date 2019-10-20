@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 //    QApplication::setOrganizationDomain("MyDesktop_test.com");
 //    QApplication::setApplicationName("MyDesktop_test");
 
-    QApplication::setApplicationVersion("1.1.0");
+    QApplication::setApplicationVersion("1.1.1");
 
     QApplication app(argc, argv);
 

@@ -3,8 +3,8 @@
     <DisplayName>MyDesktop</DisplayName>
     <Description>MyDesktop is an application which allows the user to gather, open and launch various files, folders and applications.</Description>
 		<Description xml:lang="fr_fr">MyDesktop est une application qui permet de rassembler, d'ouvrir et de lancer des fichiers, dossier et applications diverses.</Description>
-    <Version>1.1.0</Version>
-    <ReleaseDate>2019-07-09</ReleaseDate>
+    <Version>1.1.1</Version>
+    <ReleaseDate>2019-10-20</ReleaseDate>
 		<Name>com.apy.mydesktop</Name>
 		<ForcedInstallation>true</ForcedInstallation>
 		<Checkable>false</Checkable>

@@ -48,11 +48,11 @@ SystemTrayIcon {
 
     onActivated: {
         // handle double click
-        if (reason == SystemTrayIcon.DoubleClick) {
+        if (reason === SystemTrayIcon.DoubleClick) {
             showWindow()
         }
         // handle simple click
-        else if (reason == SystemTrayIcon.Trigger) {
+        else if (reason === SystemTrayIcon.Trigger) {
 
             // I wanted to show the menu on simple click, but could not do it.
             // My experiments below.

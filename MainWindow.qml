@@ -1649,7 +1649,7 @@ ApplicationWindow {
             }
 
             // Decrease indexes higher than globalIndex
-            for (var j = 0; j < matrixCopy[i]; j++ )
+            for (var j = 0; j < matrixCopy[i].length; j++ )
             {
                 if (matrixCopy[i][j] > globalIndex)
                 {
@@ -2009,5 +2009,39 @@ ApplicationWindow {
     function updateCurrentTabIndexSetting()
     {
         settings.currentTab = Math.min(Math.max(0,tabBar.currentIndex), tabBar.count - 1)
+    }
+
+    // *************************************
+
+    // Debug function to pretty print the internal indices matrix
+    function printLocalToGlobalIndexMatrix()
+    {
+        var str = ""
+        var line = ""
+        var j = 0
+        var keepGoing = true
+
+        while (keepGoing)
+        {
+            keepGoing = false
+            str += (line + "\n")
+            line = ""
+
+            for(var i = 0; i < localToGlobalIndexMatrix.length; i++)
+            {
+                if (j < localToGlobalIndexMatrix[i].length)
+                {
+                    line += localToGlobalIndexMatrix[i][j] + " "
+                    keepGoing = true
+                }
+                else
+                {
+                    line += ". "
+                }
+            }
+
+            j++
+        }
+        print(str)
     }
 }
