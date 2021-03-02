@@ -4,22 +4,22 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="MainWindow.qml" line="16"/>
+        <location filename="MainWindow.qml" line="15"/>
         <source>My Desktop</source>
         <translation>Mon Bureau</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="34"/>
+        <location filename="MainWindow.qml" line="33"/>
         <source>&amp;Actions</source>
         <translation>&amp;Actions</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="38"/>
+        <location filename="MainWindow.qml" line="37"/>
         <source>&amp;Launch selected item</source>
         <translation>&amp;Ouvrir l&apos;élément</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="49"/>
+        <location filename="MainWindow.qml" line="48"/>
         <source>&amp;Open location</source>
         <translation>&amp;Ouvrir le dossier</translation>
     </message>
@@ -59,294 +59,279 @@
         <translation>&amp;Thème sombre</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="217"/>
-        <source>&amp;Global Shortcut</source>
-        <translation>&amp;Raccourci Permanent</translation>
-    </message>
-    <message>
-        <location filename="MainWindow.qml" line="230"/>
+        <location filename="MainWindow.qml" line="220"/>
         <source>&amp;Language</source>
         <translation>&amp;Langue</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="255"/>
+        <location filename="MainWindow.qml" line="245"/>
         <source>&amp;Deletion behavior</source>
         <translation>&amp;Type de Suppression</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="258"/>
+        <location filename="MainWindow.qml" line="248"/>
         <source>&amp;Always ask</source>
         <translation>&amp;Toujours demander</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="268"/>
+        <location filename="MainWindow.qml" line="258"/>
         <source>&amp;Delete from tab</source>
         <translation>&amp;Suppr. de l&apos;onglet</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="278"/>
+        <location filename="MainWindow.qml" line="268"/>
         <source>&amp;Permanently delete</source>
         <translation>&amp;Suppr. définitive</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="291"/>
+        <location filename="MainWindow.qml" line="281"/>
         <source>&amp;Launch at startup</source>
         <translation>&amp;Démarrage auto</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="306"/>
+        <location filename="MainWindow.qml" line="296"/>
         <source>&amp;Show window at app startup</source>
         <translation>&amp;Montrer la fenêtre au démarrage</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="317"/>
+        <location filename="MainWindow.qml" line="307"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="333"/>
-        <location filename="MainWindow.qml" line="1297"/>
+        <location filename="MainWindow.qml" line="324"/>
+        <location filename="MainWindow.qml" line="1282"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1083"/>
+        <location filename="MainWindow.qml" line="1065"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1104"/>
+        <location filename="MainWindow.qml" line="1087"/>
         <source>Open location</source>
         <translation>Ouvrir l&apos;emplacement</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1128"/>
+        <location filename="MainWindow.qml" line="1112"/>
         <source>Move down</source>
         <translation>Descendre</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1149"/>
+        <location filename="MainWindow.qml" line="1134"/>
         <source>Move up</source>
         <translation>Monter</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1182"/>
+        <location filename="MainWindow.qml" line="1167"/>
         <source>Drag and drop files, folders, applications, shortcuts or internet links.</source>
         <translation>Glisser-déposer des fichiers, dossiers, applications, raccourcis ou liens internet.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1216"/>
+        <location filename="MainWindow.qml" line="1201"/>
         <source>My Desktop Help Page</source>
         <translation>Mon Bureau : Page d&apos;Aide</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1217"/>
+        <location filename="MainWindow.qml" line="1202"/>
         <source>My Desktop allows you to gather applications, files, folders and hyperlinks and to open them with their default program.</source>
         <translation>Mon Bureau vous permet de rassembler des applications, fichiers, dossiers et hyperliens et de les ouvrir avec leur application par défaut.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1218"/>
+        <location filename="MainWindow.qml" line="1203"/>
         <source>You can also open the item location in the file explorer if said file is local.</source>
         <translation>Vous pouvez également ouvrir l&apos;emplacement de l&apos;élement si celui-ci est local.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1219"/>
+        <location filename="MainWindow.qml" line="1204"/>
         <source>You can also paste a link to the item from the clipboard.</source>
         <oldsource>You can also paste a link to the item from the clipboard</oldsource>
         <translation>Vous pouvez également coller un élément depuis le presse-papier.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1221"/>
+        <location filename="MainWindow.qml" line="1206"/>
         <source>If an item is displayed in red and is striked out, this means the item does not exist anymore.</source>
         <translation>Si un élément est barré et de couleur rouge alors celui-ci a été déplacé ou supprimé de votre ordinateur.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1223"/>
+        <location filename="MainWindow.qml" line="1208"/>
         <source>You can change the application language by clicking &quot;?&quot; then &quot;Language&quot;.</source>
         <translation>Vous pouvez changer la langue de l&apos;application en cliquant sur &quot;?&quot; puis sur &quot;Langue&quot;.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1224"/>
+        <location filename="MainWindow.qml" line="1209"/>
         <source>You can make this application launch automatically at startup by clicking &quot;?&quot; then &quot;Launch at startup&quot;.</source>
         <translation>Vous pouvez faire en sorte que cette application se lance au démarrage en cliquant sur &quot;?&quot; puis sur &quot;Démarrage auto&quot;.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1225"/>
+        <location filename="MainWindow.qml" line="1210"/>
         <source>Note: </source>
         <translation>Note: </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1225"/>
+        <location filename="MainWindow.qml" line="1210"/>
         <source>If you drag and drop a shortcut file onto the My Desktop window then what will be remembered is the shortcut target, not the shortcut itself, as such you can safely delete said shortcut.</source>
         <translation>Si vous glissez-déposez un raccourci sur la fenêtre de Mon Bureau, l&apos;élément pris en compte est l&apos;élément cible du raccourci et non le raccourci lui-même. Il est donc possible de supprimer ce raccourci sans problème pour l&apos;application.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1226"/>
+        <location filename="MainWindow.qml" line="1211"/>
         <source>Shortcut list</source>
         <translation>Liste des raccourcis</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1228"/>
+        <location filename="MainWindow.qml" line="1213"/>
         <source>Enter: </source>
         <translation>Entrée : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1228"/>
+        <location filename="MainWindow.qml" line="1213"/>
         <source>open the selected item with the associated application.</source>
         <translation>ouvre l&apos;élément sélectionné avec l&apos;application par défaut associée.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1229"/>
+        <location filename="MainWindow.qml" line="1214"/>
         <source>Ctrl + O: </source>
         <translation>Ctrl + O : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1229"/>
+        <location filename="MainWindow.qml" line="1214"/>
         <source>open the folder containing the selected item.</source>
         <translation>ouvre le dossier contenant l&apos;élément sélectionné.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1230"/>
+        <location filename="MainWindow.qml" line="1215"/>
         <source>Del: </source>
         <translation>Suppr : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1230"/>
+        <location filename="MainWindow.qml" line="1215"/>
         <source>delete the selected item from the list.</source>
         <translation>supprimer l&apos;élément sélectionné de la liste.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1231"/>
+        <location filename="MainWindow.qml" line="1216"/>
         <source>F2: </source>
         <translation>F2 : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1231"/>
+        <location filename="MainWindow.qml" line="1216"/>
         <source>rename the selected item. &quot;Enter&quot; to validate &quot;Esc&quot; to cancel.</source>
         <translation>renomme l&apos;élément sélectionné. &quot;Entrée&quot; pour valider et &quot;Échap&quot; pour annuler.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1232"/>
+        <location filename="MainWindow.qml" line="1217"/>
         <source>F5: </source>
         <translation>F5 : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1232"/>
+        <location filename="MainWindow.qml" line="1217"/>
         <source>refresh display.</source>
         <translation>rafraîchit l&apos;affichage.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1240"/>
+        <location filename="MainWindow.qml" line="1225"/>
         <source>Ctrl + LeftArrow: </source>
         <translation>Ctrl + Flèche de gauche : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1240"/>
+        <location filename="MainWindow.qml" line="1225"/>
         <source>Move left the current custom tab.</source>
         <translation>Déplace vers la gauche l&apos;onglet personnalisé courant.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1241"/>
+        <location filename="MainWindow.qml" line="1226"/>
         <source>Ctrl + RightArrow: </source>
         <translation>Ctrl + Flèche vers la droite : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1241"/>
+        <location filename="MainWindow.qml" line="1226"/>
         <source>Move right the current custom tab.</source>
         <translation>Déplace vers la droite l&apos;onglet personnalisé courant.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1243"/>
+        <location filename="MainWindow.qml" line="1228"/>
         <source>Ctrl + T: </source>
         <translation>Ctrl + T : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1301"/>
+        <location filename="MainWindow.qml" line="1286"/>
         <source>Current version is </source>
         <translation>La version actuelle est la version </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1409"/>
-        <source>Modifying Global Search Shortcut</source>
-        <translation>Changer le Raccourci Permanent de Recherche</translation>
-    </message>
-    <message>
-        <location filename="MainWindow.qml" line="1414"/>
-        <source>Search global shortcut could not be set to the desired value, try another</source>
-        <translation>La valeur désirée n&apos;a pas pue être affectée au raccourci permanent de recherche, essayez-en une autre</translation>
-    </message>
-    <message>
-        <location filename="MainWindow.qml" line="1479"/>
+        <location filename="MainWindow.qml" line="1392"/>
         <source>Deleting item</source>
         <translation>Suppression d&apos;un élément</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1486"/>
+        <location filename="MainWindow.qml" line="1399"/>
         <source>Delete from tab</source>
         <translation>Suppr. de l&apos;onglet</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1492"/>
+        <location filename="MainWindow.qml" line="1405"/>
         <source>Permanently delete</source>
         <translation>Suppr. définitivement</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1501"/>
+        <location filename="MainWindow.qml" line="1414"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1511"/>
+        <location filename="MainWindow.qml" line="1424"/>
         <source>You are about to delete an item from a custom tab.</source>
         <translation>Vous êtes sur le point de supprimer un élément d&apos;un onglet personnalisé.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1512"/>
+        <location filename="MainWindow.qml" line="1425"/>
         <source>Do you wish to remove the item from the tab or to delete it permanently ?</source>
         <translation>Souhaitez vous supprimer l&apos;élément de l&apos;onglet ou le supprimer définitivement ?</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1513"/>
+        <location filename="MainWindow.qml" line="1426"/>
         <source>If you choose the former, the item will still be available in your other tabs.</source>
         <translation>Si vous choisissez de le supprimer de l&apos;onglet, l&apos;élément sera toujours disponible dans vos autres onglets.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1522"/>
+        <location filename="MainWindow.qml" line="1435"/>
         <source>Do not ask me again</source>
         <translation>Ne plus me demander</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1233"/>
+        <location filename="MainWindow.qml" line="1218"/>
         <source>switch between light and dark theme.</source>
         <translation>alterne entre les thèmes sombre et clair.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1234"/>
+        <location filename="MainWindow.qml" line="1219"/>
         <source>Ctrl + F: </source>
         <translation>Ctrl + F : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1234"/>
+        <location filename="MainWindow.qml" line="1219"/>
         <source>search shortcut.</source>
         <translation>raccourci de recherche.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1235"/>
+        <location filename="MainWindow.qml" line="1220"/>
         <source>Ctrl + H: </source>
         <translation>Ctrl + H : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1235"/>
+        <location filename="MainWindow.qml" line="1220"/>
         <source>opens this help page.</source>
         <translation>ouvre cette page d&apos;aide.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1242"/>
+        <location filename="MainWindow.qml" line="1227"/>
         <source>Ctrl + W: </source>
         <translation>Ctrl + W : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1236"/>
+        <location filename="MainWindow.qml" line="1221"/>
         <source>closes the application.</source>
         <translation>ferme l&apos;application.</translation>
     </message>
@@ -396,133 +381,133 @@
         <translation>&amp;Déplacer l&apos;onglet à droite</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="530"/>
-        <location filename="MainWindow.qml" line="1974"/>
+        <location filename="MainWindow.qml" line="505"/>
+        <location filename="MainWindow.qml" line="1887"/>
         <source>New Tab</source>
         <translation>Nouvel Onglet</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="627"/>
+        <location filename="MainWindow.qml" line="605"/>
         <source>All</source>
         <translation>Tout</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1220"/>
+        <location filename="MainWindow.qml" line="1205"/>
         <source>Double-click on an item to open it with its default associated program.</source>
         <translation>Double-cliquez sur un élément pour l&apos;ouvrir avec son programme par défaut.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1222"/>
+        <location filename="MainWindow.qml" line="1207"/>
         <source>There is a refresh button at the bottom of the window.</source>
         <translation>Il existe un bouton pour rafraîchir la page en bas de la fenêtre.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1233"/>
+        <location filename="MainWindow.qml" line="1218"/>
         <source>Shift + T: </source>
         <translation>Maj + T : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1236"/>
+        <location filename="MainWindow.qml" line="1221"/>
         <source>Ctrl + Q: </source>
         <translation>Ctrl + Q : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1237"/>
+        <location filename="MainWindow.qml" line="1222"/>
         <source>Ctrl + V: </source>
         <translation>Ctrl + V : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1237"/>
+        <location filename="MainWindow.qml" line="1222"/>
         <source>Add an item to the list by pasting from the clipboard.</source>
         <translation>Ajouter un élément à la liste en le collant depuis le presse-papier.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1238"/>
+        <location filename="MainWindow.qml" line="1223"/>
         <source>Ctrl + UpArrow: </source>
         <translation>Ctrl + Flèche du haut : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1238"/>
+        <location filename="MainWindow.qml" line="1223"/>
         <source>Move up the current item.</source>
         <translation>Faire monter l&apos;élément sélectionné.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1239"/>
+        <location filename="MainWindow.qml" line="1224"/>
         <source>Ctrl + DownArrow: </source>
         <translation>Ctrl + Flèche du bas : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1239"/>
+        <location filename="MainWindow.qml" line="1224"/>
         <source>Move down the current item.</source>
         <translation>Faire descendre l&apos;élément sélectionné.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1242"/>
+        <location filename="MainWindow.qml" line="1227"/>
         <source>Delete the current custom tab.</source>
         <translation>Supprimer l&apos;onglet personnalisé courant.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1350"/>
+        <location filename="MainWindow.qml" line="1335"/>
         <source>Renaming Tab</source>
         <translation>Renommer l&apos;Onglet</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="726"/>
+        <location filename="MainWindow.qml" line="705"/>
         <source>Search...</source>
         <translation>Rechercher...</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="731"/>
+        <location filename="MainWindow.qml" line="710"/>
         <source>You cannot move items while search bar is not empty</source>
         <translation>Vous ne pouvez déplacer les éléments pendant une recherche</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1243"/>
+        <location filename="MainWindow.qml" line="1228"/>
         <source>Add a custom tab.</source>
         <translation>Ajouter un onglet personnalisé.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1244"/>
+        <location filename="MainWindow.qml" line="1229"/>
         <source>Tab: </source>
         <translation>Tab : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1244"/>
+        <location filename="MainWindow.qml" line="1229"/>
         <source>Go to next tab.</source>
         <translation>Allez à l&apos;onglet suivant.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1245"/>
+        <location filename="MainWindow.qml" line="1230"/>
         <source>Shift + Tab: </source>
         <translation>Maj + Tab : </translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1245"/>
+        <location filename="MainWindow.qml" line="1230"/>
         <source>Go to previous tab.</source>
         <translation>Allez à l&apos;onglet précédent.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1266"/>
+        <location filename="MainWindow.qml" line="1251"/>
         <source>Refresh</source>
         <translation>Rafraîchir</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1278"/>
+        <location filename="MainWindow.qml" line="1263"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1300"/>
+        <location filename="MainWindow.qml" line="1285"/>
         <source>MyDesktop was developped by Arnaud Portay.&lt;br&gt;The source code is available on &lt;a href=&quot;https://github.com/arnaudPortay/MyDesktop&quot;&gt;Github&lt;/a&gt;.&lt;br&gt;Some code was taken here and there on the web, including from the &lt;a href = &quot;https://github.com/VincentPonchaut/qmlplayground&quot;&gt;QmlPlayground&lt;/a&gt; application by Vincent Ponchaut.&lt;br&gt;&lt;br&gt;The application icon was made by &lt;a href=&quot;https://www.flaticon.com/authors/pixel-perfect&quot;&gt;Pixel perfect&lt;/a&gt; and taken from &lt;a href=&quot;www.flaticon.com&quot;&gt;www.flaticon.com&lt;/a&gt;.</source>
         <translation>MonBureau est développé par Arnaud Portay.&lt;br&gt;Le code source est disponible sur &lt;a href=&quot;https://github.com/arnaudPortay/MyDesktop&quot;&gt;Github&lt;/a&gt;.&lt;br&gt;Des bouts de code ont été pris ici et là sur le net, notamment dans l&apos;application &lt;a href = &quot;https://github.com/VincentPonchaut/qmlplayground&quot;&gt;QmlPlayground&lt;/a&gt; de Vincent Ponchaut.&lt;br&gt;&lt;br&gt;L&apos;icône de l&apos;application a été réalisée par &lt;a href=&quot;https://www.flaticon.com/authors/pixel-perfect&quot;&gt;Pixel perfect&lt;/a&gt; et récupérée sur &lt;a href=&quot;www.flaticon.com&quot;&gt;www.flaticon.com&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1328"/>
+        <location filename="MainWindow.qml" line="1313"/>
         <source>Woops...</source>
         <translation>Ouuups...</translation>
     </message>
     <message>
-        <location filename="MainWindow.qml" line="1332"/>
+        <location filename="MainWindow.qml" line="1317"/>
         <source>This feature is not supported on your platform yet.</source>
         <translation>Cette fonctionnalité n&apos;est pas supportée sur vôtre plateforme pour le moment.</translation>
     </message>
