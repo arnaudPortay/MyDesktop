@@ -2,7 +2,6 @@ QT += \
     quick quickcontrols2 core gui widgets
 CONFIG += c++11
 
-include(qxtglobalshortcut5/qxt.pri)
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -19,8 +18,7 @@ SOURCES += \
         main.cpp \
     filewrapper.cpp \
     desktoptranslator.cpp \
-    clipboardwrapper.cpp \
-    globalshortcut.cpp
+    clipboardwrapper.cpp
 
 RESOURCES += qml.qrc
 
@@ -40,8 +38,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     filewrapper.h \
     desktoptranslator.h \
-    clipboardwrapper.h \
-    globalshortcut.h
+    clipboardwrapper.h
 
 # Localization
 TRANSLATIONS = FR_fr.ts
