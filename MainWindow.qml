@@ -1058,7 +1058,7 @@ ApplicationWindow {
                         anchors.right: parent.right
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
-                        anchors.rightMargin: vScrollBar.width
+                        anchors.rightMargin: vScrollBar.visible ? vScrollBar.width : 2
                         height: 40
                         width: height
                         imageSource: "qrc:///img/trash.svg"
@@ -1080,6 +1080,7 @@ ApplicationWindow {
                         anchors.right: delTrashButton.left
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
+                        anchors.rightMargin: -8
                         height: 40
                         width: height
                         imageSource: hovered ? "qrc:///img/folderOpen.svg" : "qrc:///img/folder.svg"
@@ -1104,6 +1105,7 @@ ApplicationWindow {
                         anchors.right: delOpenLocationButton.left
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
+                        anchors.rightMargin: -8
                         height: 40
                         width: height
                         imageSource: "qrc:///img/keyboard_arrow_down.svg"
@@ -1125,6 +1127,7 @@ ApplicationWindow {
                         anchors.right: moveDownButton.left
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
+                        anchors.rightMargin: -8
                         height: 40
                         width: height
                         imageSource: "qrc:///img/keyboard_arrow_up.svg"
