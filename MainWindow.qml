@@ -14,7 +14,7 @@ ApplicationWindow {
     height: 480
     title: qsTr("My Desktop") + translator.emptyString
     
-    Material.theme: darkTheme ? Material.Dark : Material.Light
+    Material.theme:  Material.Dark
     Material.accent: Material.Cyan
     
 
@@ -217,19 +217,6 @@ ApplicationWindow {
         Menu {
             title: qsTr("&?")
             
-            Action{
-                text: qsTr("&Use dark theme") + translator.emptyString
-                checkable: true
-                checked: root.darkTheme
-                onTriggered: {
-                    root.darkTheme = !root.darkTheme
-                    root.keepLink = false
-                }
-                shortcut: "Shift+T"
-            }
-
-            MenuSeparator{}
-            
             Menu{
                 title: qsTr("&Language") + translator.emptyString
                 Action {
@@ -363,7 +350,6 @@ ApplicationWindow {
     property var desktopItemsNames: []
     property var customTabs: []
     property bool renaming: false
-    property bool darkTheme: true
     property string language: "en"
     onLanguageChanged: {
         translator.selectLanguage(language)
@@ -403,9 +389,6 @@ ApplicationWindow {
         property alias windowY: root.y
         property alias windowWidth: root.width
         property alias windowHeight: root.height
-        
-        // Theme
-        property alias darkTheme: root.darkTheme
         
         // Language
         property alias language: root.language
@@ -1252,7 +1235,6 @@ ApplicationWindow {
                       "<li><b><i>" + qsTr("Del: ")+"</i></b>" + qsTr("delete the selected item from the list.") + "</li>"+
                       "<li><b><i>" + qsTr("F2: ")+"</i></b>" + qsTr("rename the selected item. \"Enter\" to validate \"Esc\" to cancel.") + "</li>"+
                       "<li><b><i>" + qsTr("F5: ")+"</i></b>" + qsTr("refresh display.") + "</li>"+
-                      "<li><b><i>" + qsTr("Shift + T: ")+"</i></b>" + qsTr("switch between light and dark theme.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + F: ")+"</i></b>" + qsTr("search shortcut.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + H: ")+"</i></b>" + qsTr("opens this help page.") + "</li>"+
                       "<li><b><i>" + qsTr("Ctrl + Q: ")+"</i></b>" + qsTr("closes the application.") + "</li>"+
