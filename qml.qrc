@@ -11,5 +11,6 @@
         <file>MainWindow.qml</file>
         <file>img/keyboard_arrow_down.svg</file>
         <file>img/keyboard_arrow_up.svg</file>
+        <file>img/copy.svg</file>
     </qresource>
 </RCC>

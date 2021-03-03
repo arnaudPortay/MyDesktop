@@ -96,6 +96,20 @@ ApplicationWindow {
                     }
                 }
 
+                Action {
+                    id: copyItemPathAction
+                    text: qsTr("&Copy item path") + translator.emptyString
+                    onTriggered: {
+                        var globalIndex = mapToGlobalIndex(desktopList.currentIndex)
+                        if (globalIndex === undefined)
+                        {
+                            globalIndex = 0
+                        }
+
+                        Clipboard.copyPath((""+root.desktopItems[globalIndex]).replace("file:///",""))
+                    }
+                }
+
                 MenuSeparator{}
 
                 Action {
@@ -1101,8 +1115,31 @@ ApplicationWindow {
 
                     IconButton
                     {
-                        id: moveDownButton
+                        id: copyUrlButton
                         anchors.right: delOpenLocationButton.left
+                        anchors.top: parent.top
+                        anchors.topMargin: (bgRect.height - height)/2
+                        anchors.rightMargin: -8
+                        margins: 12
+                        height: 40
+                        width: height
+                        imageSource: "qrc:///img/copy.svg"
+                        ToolTip.text: qsTr("Copy path") + translator.emptyString
+                        ToolTip.delay: 500
+
+                        visible: desktopItemsDelegate.hovered
+
+                        enabled: !renaming
+
+                        onClicked: {
+                            Clipboard.copyPath((""+path).replace("file:///",""))
+                        }
+                    }
+
+                    IconButton
+                    {
+                        id: moveDownButton
+                        anchors.right: copyUrlButton.left
                         anchors.top: parent.top
                         anchors.topMargin: (bgRect.height - height)/2
                         anchors.rightMargin: -8

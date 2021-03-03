@@ -13,6 +13,7 @@ public:
     ~ClipboardWrapper();
 
     Q_INVOKABLE QList<QUrl> getUrls();
+    Q_INVOKABLE void copyPath(const QString& pPath);
 
 private:
     QClipboard* mClipboard;
